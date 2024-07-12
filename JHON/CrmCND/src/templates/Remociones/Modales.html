@@ -1,0 +1,167 @@
+<!-- Modal GESTION-->
+
+<div class="modal fade" id="mdlstcgesrem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div style="color: black;" class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-gradient-primary">
+          <h5 class="modal-title" id="staticBackdropLabel" style="color: aliceblue;">Gestion Remocion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <div class="row mt-2">
+          <h5 class="bg-gradient-primary" style="color: aliceblue;" >Informacion Asesor</h5>
+        </div>
+          <input type="text" name="idremocion" id="idremocion" value="" hidden>
+          <form action="">
+            <div class="row">
+                <table style="color: black !important;" class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th hidden><span>Cc</span></th>
+                      <th><span>Nombre</span></th>
+                      <th><span>Campaña</span></th>
+                      <th><span>perfil</span></th>
+                      <th><span>Supervisor</span></th>
+                      <th><span>Ciudad</span></th>
+                      <th><span>Ingreso</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tblbdyasesor">
+                  </tbody>
+              </table>
+            </div>
+            <div class="row mt-2">
+              <table  style="color: black !important;" class="table table-sm">
+                <thead>
+                  <th><span>Asesor calidad</span></th>
+                  <th><span>Fecha</span></th>
+                  <th><span>Nota</span></th>
+                  <th><span>Observaciones</span></th>
+                </thead>
+                <tbody id="tblbdycalidad">
+                </tbody>
+              </table>
+            </div>
+
+            <div class="row mt-2 mb-2 table-container">
+              <table class="table" style="color: black;">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Cumplimiento</th>
+                  </tr>
+                </thead>
+                <tbody id="tblbdyitemcal">
+
+                </tbody>
+              </table>
+
+
+            </div>
+
+
+            <div class="row mt-2">
+              <h5 class="bg-gradient-primary" style="color: aliceblue;">Formacion</h5>
+                <div class="col-auto">
+                  <label class="form-label" for="Selmatestudio">Material de estudio</label>
+                </div>
+                <div class="col-auto">
+                  <select class="form-select"  name="Selmatestudio" id="Selmatestudio">
+                    <option value="">..::Selecione::..</option>
+                    <option value="0">No aplica</option>
+                  </select>
+                </div>
+                {% if current_user.cargo in ['LIDER FORMACION','FORMADOR','JEFE DE OPERACIONES','Desarrollador'] %}
+                <div class="col-auto">
+                  <input class="btn btn-info" id="btnasimatest" type="button"  value="Asignar" onclick="HadleTabla.setmatremo()">
+                </div>
+              {% endif %}
+                <div class="col-auto" id="lnkmatstudio">
+                  
+                </div>
+
+            </div>
+
+            <div class="row mt-2">
+              <table  style="color: black !important;" class="table">
+                <thead>
+                  <th>link</th>
+                  <th>Asiste</th>
+                  <th>fecha</th>
+                  <th>Hora</th>
+                  <th>Evaluacion</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Nota</th>
+                </thead>
+                <tbody id="tblbdyeva">
+                </tbody>
+              </table>
+            </div>
+
+            <div class="row mt-2 mb-2">
+              <h5 class="bg-gradient-primary" style="color: aliceblue;">Calidad</h5>
+                <div class="row mt-2 mb-2">
+                  <div class="col-auto">
+                    <label for="SelIdMon">Id monitoreo</label>
+                  </div>
+                  <div class="col-auto mt-2 mb-2">
+                    <select class="form-select" name="SelIdMon" id="SelIdMon"></select>
+                  </div>
+                  {% if current_user.cargo in ['LIDER CALIDAD','CALIDAD','JEFE DE OPERACIONES','Desarrollador'] %}
+                    <div class="col-auto">
+                      <input class="btn btn-info" id="btnasimonrem" type="button" value="Asignar" onclick="HadleTabla.setmonremo()">
+                    </div>
+                  {% endif %}
+                </div>
+
+                <table>
+                  <thead>
+                    <th>Auditor</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Nota</th>
+                    <th>observaciones</th>
+                  </thead>
+                    <tbody id="tblbdysegcal">
+                    </tbody>
+                </table>
+
+                <div class="row mt-2 mb-2">                                    
+                  <fieldset>
+                    <legend class="bg-gradient-primary" style="color: aliceblue;">Operaciones</legend>                    
+                    <table class="table" style="color:black;">
+                      <thead>
+                        <tr>
+                          <th>usuario</th>
+                          <th>Fecha</th>
+                          <th>Hora</th>                      
+                        </tr>
+                      </thead>
+                      <tbody id="tblbdyoperacion">
+  
+  
+                      </tbody>
+                    </table>
+                    <label for="txtcomsuprem">Observaciones supervisor</label>
+                      <textarea class="form-control" placeholder="Deja tus observaciones aqui!" id="txtcomsuprem"  rows="5"></textarea>
+                    </label>
+                    {% if current_user.cargo in ['SUPERVISOR','Desarrollador'] %}                      
+                        <input type="button" class="btn btn-outline-success"  id="btnguacomsuprem" value="Guardar Observaciones"
+                        onclick="HadleTabla.setobssuprem()">
+                      
+                    {% endif %}
+                  </fieldset>
+                </div>
+
+            </form>
+          </div>
+
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

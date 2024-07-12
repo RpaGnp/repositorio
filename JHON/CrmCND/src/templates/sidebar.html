@@ -1,0 +1,286 @@
+<!-- Sidebar -->
+
+
+<ul class="navbar-nav bg-gradient-primary sidebar text-start sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fa-solid fa-chart-user"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">CRM CND <sub>v 1.0</sub></div>
+    </a>
+
+    
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active" id="BtnMainDashboard">
+        <a class="nav-link" href="{{ url_for('DashboardCND')}}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+    {% if current_user.estado=="Activo" %}
+        <!-- Nav Item - Pages Collapse Menu -->
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Modulo calidad
+        </div>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Calidad</span>
+            </a>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Opciones gestion:</h6>
+                    {% if current_user.cargo in ["Gerente","LIDER CALIDAD","SUPERVISOR","FORMADOR","CALIDAD","JEFE DE OPERACIONES","JEFE DE OPERACIONES","LIDER FORMACION Y CALIDAD","Desarrollador"] %}<!--"Desarrollo"-->
+                        <a class="collapse-item " href="{{ url_for('NuevoMonitoreo')}}">Nuevo Monitoreo</a>
+                        {% if current_user.cargo in ["CALIDAD","LIDER CALIDAD","JEFE DE OPERACIONES","Desarrollador"] %}
+                            <a class="collapse-item" href="{{ url_for('EditarMonitoreo')}}">Editar Monitoreo</a>                            
+                            <a class="collapse-item" href="{{ url_for('UploadMonClaro')}}">Monitoreo Claros</a> 
+                            <a class="collapse-item" href="{{ url_for('VistaInformes')}}">Informes Monitoreos</a>                                                       
+                        {% endif %}                                                              
+                    {% endif %}
+                            <a class="collapse-item" href="{{ url_for('HistorialMon',character_id=current_user.id )}}">Historial monitoreos</a>
+                  </div>
+              </div>    
+        </li>
+
+        <div class="sidebar-heading">
+            Modulo Formacion
+        </div>
+        <li class="nav-item">            
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefour"
+                aria-expanded="true" aria-controls="collapsefour">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Formacion</span>
+            </a>
+            <div id="collapsefour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Opciones gestion:</h6>                    
+                      {% if current_user.cargo in ["FORMADOR","LIDER FORMACION","Gerente","Desarrollador"] %}
+                          <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='SubirPreturno')}}">Material de estudio</a>                          
+                          <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='CrearEvaluacion')}}">Evaluaciones</a>
+                          <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='NotasEvaluacion')}}">Notas Evaluaciones</a>
+                        
+                        {% elif current_user.cargo in ["SUPERVISOR","LIDER CALIDAD"] %}
+                            <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='VerPreturno')}}">Material de estudio</a>  
+                            <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='NotasEvaluacion')}}">Preturno Asesores</a>
+
+                      {% else %}
+                          <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='VerPreturno')}}">Material de estudio</a>                          
+                      {% endif %}
+                    
+                      
+                      <a class="collapse-item " href="https://conectados.com.co/inicio?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_lifecycle=0&_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fgroup%2Fguest%2Finicio" target="_blank">Conectados</a>                    
+                      <!-- <a class="collapse-item " href="{{ url_for('Enrrutador',application_name = 'ConsultaPreturno')}}">Consultar</a> -->
+                    <!--<a class="collapse-item " id="Btn_Nuevo" href="#">Nuevo</a>-->                      
+                    
+                </div>
+            </div>
+        </li>
+
+        <div class="sidebar-heading">
+                Modulo Remociones
+            </div>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRem"
+                    aria-expanded="true" aria-controls="collapseRem">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Remociones</span>
+                </a>
+                <div id="collapseRem" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Opciones gestion:</h6>
+                        {% if current_user.cargo in ["LIDER CALIDAD","CALIDAD","Desarrollador"] %}<!--"Desarrollo"-->
+                            <a class="collapse-item " href="{{ url_for('Enrrutador',application_name='RegistrarRemocion')}}">Nueva Remocion</a>
+                        {% endif %}
+                            <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='HistorialRemocion')}}">Historial</a>
+                      </div>
+                  </div>
+            </li>
+
+
+        <hr class="sidebar-divider">        
+        {% if current_user.cargo in ["DATA MARSHALL","Gerente","Desarrollador"] %}
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Administracion
+            </div>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                        aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-fw fa-folder"></i>
+                        <span>Usuarios</span>
+                    </a>
+                    <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Ajustes extras:</h6>                            
+                            <a class="collapse-item" href="{{ url_for('CreacionUser')}}">Registar usuario</a>
+                            <a class="collapse-item" href="{{ url_for('FormateaClave')}}">Actualizar claves</a>
+                            <!--<a class="collapse-item" href="{{ url_for('AdminUsuarios')}}">Administracion Usuarios</a>-->
+                            <!--<a class="collapse-item" href="{{ url_for('AdminItemCalidad')}}">Items calidad</a>-->
+                        </div>
+                    </div>
+                </li>                
+        {% endif %}
+
+            <div class="sidebar-heading">
+                Software
+            </div>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePagesexe"
+                        aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-fw fa-folder"></i>
+                        <span>Bots</span>
+                    </a>
+                    <div id="collapsePagesexe" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">.exe</h6>
+                            {% if current_user.cargo in ["Desarrollador","Gerente","LIDER CALIDAD","SUPERVISOR","FORMADOR","CALIDAD","JEFE DE OPERACIONES","JEFE DE OPERACIONES","LIDER FORMACION Y CALIDAD","DATA MARSHALL"] %}<!--"Desarrollo"-->
+                                <a class="collapse-item" href="http://172.20.100.51:440/StaffCndexe">Aplicativos</a>
+                                <!--
+                                <a class="collapse-item" href="{{ url_for('dwexe',appname='Monitor Koala')}}">Monitor Koala</a>
+                                <a class="collapse-item" href="{{ url_for('dwexe',appname='Orquestador CND')}}">Orquestador Bots</a>
+                                <a class="collapse-item" href="{{ url_for('dwexe',appname='Monitor calidad')}}">Monitor calidad</a>
+                                <a class="collapse-item" href="{{ url_for('dwexe',appname='Bot hhpp')}}">Bot hhpp</a>
+                                <a class="collapse-item" href="{{ url_for('dwexe',appname='Cancelador RR')}}">Bot cancelacion RR</a>
+                                <a class="collapse-item" href="{{ url_for('dwexe',appname='Utp RR')}}">Bot utp RR</a>-->
+                            {% else %}
+                                <!--
+                                <a class="collapse-item" href="{{ url_for('download')}}">Koala</a>-->
+                            <a class="collapse-item" href="http://172.20.100.51:440/NubeAsesorCnd">Aplicativos</a>
+                                <a class="collapse-item" href="http://sapgnp/Acceso.php">Polaris</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+                -->
+                
+                <div class="sidebar-heading">
+                    Gestion Despachos
+                </div>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePlantillas"
+                            aria-expanded="true" aria-controls="collapsePlantillas">
+                            <i class="fas fa-fw fa-cog"></i>
+                            <span>Gestion Operativa</span>
+                            <div id="collapsePlantillas" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <h6 class="collapse-header">Opciones Gestion</h6>
+                                    <!--<a class="collapse-item " id="Btn_Nuevo" href="#">Nuevo</a>-->
+                                    {% if current_user.cargo in ["DATA MARSHALL","Desarrollador","Gerente","LIDER CALIDAD","SUPERVISOR","FORMADOR","CALIDAD","JEFE DE OPERACIONES","JEFE DE OPERACIONES","LIDER FORMACION Y CALIDAD"] %}
+                                        <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='HistorialRazones')}}">Historial Razones</a>
+                                        <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='Asignacionback')}}">Asignacion backlog</a>
+
+                                        
+                                    {% else %}
+                                        <a class="collapse-item" href="{{ url_for('PlaDespachos')}}">Plantillas Despacho</a>
+                                        <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='PlaBacklog')}}">Plantillas Back</a>
+                                    {% endif %}
+                                </div>
+                            </div>                        
+                    </li>
+            
+            <div class="sidebar-heading">
+                Invetario equipos
+            </div>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventarios"
+                        aria-expanded="true" aria-controls="collapseInventarios">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Inventarios</span>
+                        <div id="collapseInventarios" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Opciones Gestion</h6>
+                                <!--<a class="collapse-item " id="Btn_Nuevo" href="#">Nuevo</a>-->
+                                {% if current_user.cargo in ["Gerente","LIDER CALIDAD","SUPERVISOR","FORMADOR","CALIDAD","JEFE DE OPERACIONES","JEFE DE OPERACIONES","LIDER FORMACION Y CALIDAD"] %}
+                                    <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='EnDesarrollo')}}">Asignar equipo</a>
+                                {% else %}
+                                    <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='EnDesarrollo')}}">Detalle pc</a>
+                                {% endif %}
+                            </div>
+                        </div>                        
+                </li>
+        
+
+        
+        
+
+            <div class="sidebar-heading">
+                Repocitorio de Archivos
+            </div>
+
+            <li class="nav-item">            
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefive"
+                    aria-expanded="true" aria-controls="collapsefive">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Archivos</span>
+                </a>
+                <div id="collapsefive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Opciones gestion:</h6>                                              
+                            <a class="collapse-item" href="{{ url_for('Enrrutador',application_name='CargarFilesGerencia')}}">Subir archivos</a>                          
+                            <!-- <a class="collapse-item " href="{{ url_for('Enrrutador',application_name = 'ConsultaPreturno')}}">Consultar</a> -->
+                        <!--<a class="collapse-item " id="Btn_Nuevo" href="#">Nuevo</a>-->                      
+                        
+                    </div>
+                </div>
+            </li>
+
+
+        <!--Nav Item - Charts
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-fw fa-chart-area"></i>
+                <span>Charts</span></a>
+        </li>-->
+
+
+        <!-- <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="fas fa-fw fa-table"></i>
+                <span>Tables</span></a>
+        </li>
+        -->
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+    
+        <hr class="sidebar-divider my-0">
+
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('logout') }}" >
+                <i class="fas fa-fw fa-table"></i>
+                <span>Salir</span></a>
+        </li>
+    {% endif %}
+
+    
+</ul>
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+
+<script>
+    $(function() {
+    $(document).on('click', 'a[class="collapse-item "]', function(event) {
+        let id = this.id;
+
+            console.log("Se presionó el Boton con Id :"+ id)
+    });
+    });
+
+</script>
+

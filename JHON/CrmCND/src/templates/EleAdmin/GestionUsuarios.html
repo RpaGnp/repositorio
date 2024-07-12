@@ -1,0 +1,114 @@
+{% extends 'BaseDashboard.html' %}
+
+{% block title %}CRM CND{% endblock %}
+
+{% block Body %}
+
+<style>
+    #TblAdmUsuarios tbody td{text-align: left;color: black;}
+
+</style>
+
+<form>
+    <!-- Input type text -->
+    <div class="form-group row align-items-center">
+        <label for="email" class="col-sm-2 col-form-label">Datos</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" name="inpDatoUsuario" id="inpDatoUsuario"
+             placeholder="Informacion Usuario" required>
+            
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-outline-info" name="BtnBusUsu" id="BtnBusUsu">Buscar</button>
+        </div>
+    </div>
+
+
+</form>
+
+<table class="table table-hover" id="TblAdmUsuarios" width="100%">
+    <thead>
+        <tr>
+          <th scope="col">Cedula</th>
+          <th scope="col">Nombres</th>
+          <th scope="col">Campaña</th>
+          <th scope="col">Perfil</th>
+          <th scope="col">Supervisor</th>
+          <th scope="col">Mas...</th>
+        </tr>
+      </thead>
+    <tbody id="TblBodyUsuarios">
+        {% for DicUsuarios in DicDatoUsu %}
+            <tr>
+                <td>{{ DicUsuarios["Id"] }}</td>
+                <td>{{ DicUsuarios["Nombre"] }}</td>
+                <td>{{ DicUsuarios["Campaña"] }}</td>
+                <td>{{ DicUsuarios["Perfil"] }}</td>
+                <td>{{ DicUsuarios["Supervisor"] }}</td>
+                <td>
+                    <div style="display: grid">
+                        <button style="grid-column: 1/2;margin-right: 10px;"
+                             class="btn  btn-outline-info chantags" data-toggle="collapse" href="#colptr{{DicUsuarios['Id']}}"
+                             aria-expanded="false" aria-controls="colptr{{DicUsuarios['Id']}}"
+                             >
+                             <img width="12px" height="55%"src="{{url_for('static', filename='/img/edita.png') }}"></img>
+                            </button>
+                        <button style="grid-column: 2/2;"
+                             class="btn  btn-outline-danger" >
+                             <img width="12px" height="55%"src="{{url_for('static', filename='/img/Delcaso.png') }}"></img>
+                            </button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="collapse multi-collapse" id="colptr{{DicUsuarios['Id']}}" colspan="6">                    
+                    <div>
+                        
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modInfoUsu">
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="modInfoUsu" tabindex="-1" aria-labelledby="modInfoUsuLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" >Datos Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modalBodyInfoAsesor">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    $("#TblAdmUsuarios").on('click','.chantags',function(){
+        var currentId=$(this).closest("tr").find("td:eq(0)").text();
+        
+
+    })
+    
+
+
+
+
+</script>
+
+
+
+{% endblock %}

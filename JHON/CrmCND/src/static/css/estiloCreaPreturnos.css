@@ -1,0 +1,25 @@
+.table{  
+    color:black !important;
+    height:15px; 
+  }
+  
+  tr{
+    width: 100%;
+    display: inline-table;
+    height:10px;
+    table-layout: fixed;
+  }
+  
+  tbody{
+    overflow-y: scroll;
+    height: 10px;
+    width: 100%;  
+  }
+  
+  
+  td {border: 1px #DDD solid; padding: 5px}
+  
+  .selected {
+      background-color: #4E73DF; 
+      color:#DDD !important;   
+  }

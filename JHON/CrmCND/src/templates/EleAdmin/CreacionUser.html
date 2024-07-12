@@ -1,0 +1,548 @@
+{% extends 'BaseDashboard.html' %}
+
+{% block title %}CRM CND{% endblock %}
+
+{% block Body %}
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+}
+
+/*Background color*/
+/*#grad1 {
+    background-color: : #9C27B0;
+    background-image: linear-gradient(120deg, #FF4081, #81D4FA);
+}*/
+
+/*form styles*/
+#msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px;
+}
+
+#msform fieldset .form-card {
+    background: white;
+    border: 0 none;
+    border-radius: 0px;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+    padding: 20px 40px 30px 40px;
+    box-sizing: border-box;
+    width: 94%;
+    margin: 0 3% 20px 3%;
+
+    /*stacking fieldsets above each other*/
+    position: relative;
+}
+
+#msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+
+    /*stacking fieldsets above each other*/
+    position: relative;
+}
+
+/*Hide all except first fieldset*/
+#msform fieldset:not(:first-of-type) {
+    display: none;
+}
+
+#msform fieldset .form-card {
+    text-align: left;
+    color: #9E9E9E;
+}
+
+#msform input, #msform textarea {
+    padding: 0px 8px 4px 8px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0px;
+    margin-bottom: 25px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2C3E50;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+#msform input:focus, #msform textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none;
+    font-weight: bold;
+    border-bottom: 2px solid skyblue;
+    outline-width: 0;
+}
+
+/*Blue Buttons*/
+#msform .action-button {
+    width: 100px;
+    background: #4E73DF;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px;
+}
+
+#msform .action-button:hover, #msform .action-button:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px skyblue;
+}
+
+/*Previous Buttons*/
+#msform .action-button-previous {
+    width: 100px;
+    background: #858796;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px;
+}
+
+#msform .action-button-previous:hover, #msform .action-button-previous:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #616161;
+}
+
+/*Dropdown List Exp Date*/
+select.list-dt {
+    border: none;
+    outline: 0;
+    border-bottom: 1px solid #ccc;
+    padding: 2px 5px 3px 5px;
+    margin: 2px;
+}
+
+select.list-dt:focus {
+    border-bottom: 2px solid skyblue;
+}
+
+/*The background card*/
+.card {
+    z-index: 0;
+    border: none;
+    border-radius: 0.5rem;
+    position: relative;
+}
+
+/*FieldSet headings*/
+.fs-title {
+    font-size: 25px;
+    color: #2C3E50;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/*progressbar*/
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey;
+}
+
+#progressbar .active {
+    color: #000000;
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 12px;
+    width: 25%;
+    float: left;
+    position: relative;
+}
+
+/*Icons in the ProgressBar*/
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f023";
+}
+
+#progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f007";
+}
+
+#progressbar #payment:before {
+    font-family: FontAwesome;
+    content: "\f09d";
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c";
+}
+
+/*ProgressBar before any progress*/
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 18px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px;
+}
+
+/*ProgressBar connectors*/
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1;
+}
+
+/*Color number of the step and the connector before it*/
+#progressbar li.active:before, #progressbar li.active:after {
+    background: skyblue;
+}
+
+/*Imaged Radio Buttons*/
+.radio-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.radio {
+    display:inline-block;
+    width: 204;
+    height: 104;
+    border-radius: 0;
+    background: lightblue;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    cursor:pointer;
+    margin: 8px 2px; 
+}
+
+.radio:hover {
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.radio.selected {
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+/*Fit image in bootstrap div*/
+.fit-image{
+    width: 100%;
+    object-fit: cover;
+}
+</style>
+<!-- MultiStep Form -->
+<div class="container-fluid" id="grad1">
+    <div class="row justify-content-center mt-0">
+        <div class="col-11 col-sm-9 col-md-7 col-lg-10 text-center p-0 mt-1 mb-2">
+            <div class="card px-0 pt-4 pb-0 mt-3 mb-3" style="border:1px black solid;">
+                <h2><strong>Crear nuevo usuario</strong></h2>
+                <p>Diligencie todos los campo y de click en siguiente</p>
+                <form id="formcedconsulta">
+                    <div class="card">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                        <div class="card-body input-group mb-3">
+                            <input required type="number" class="form-control" id="inpcedasebus"
+                             name="inpcedasebus" placeholder="Buscar"/>
+                            <button class="btn btn-outline-secondary" id="btnbuscedase" type="submit">Buscar</button>
+                        </div>
+                      </div>
+                </form>
+
+
+                <div class="row">
+                    <div class="col-md-12 mx-0">
+                        <form id="msform">                            
+                            <!-- fieldsets --> 
+                            <div class="card shadow p-3 mb-5 bg-body rounded">
+                                <div class="form-card">
+                                    <h2 class="fs-title">Informacion personal</h2>
+                                    <input type="number" name="inpidad" id="inpidad" placeholder="N° identificacion" required/>
+                                    <input type="text" name="inpnomad" id="inpnomad" placeholder="Nombres y apellidos" required/>
+                                    <input type="email" name="inpemailad" id="inpemailad" placeholder="Email corporativo" required/>
+                                    <input type="text" name="inpUsuRedad" id="inpUsuRedad" placeholder="Usuario de red"  required/>             
+                                </div>   
+                            </div>                            
+                            
+                            <div class="card shadow p-3 mb-5 bg-body rounded">
+                                <div class="form-card">
+                                    <h2 class="fs-title">Informacion Campaña</h2>                                    
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                          <label for="inpSede" class="form-label">Campaña</label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                          <select required class="form-select form-select-sm" aria-label=".form-select-lg example"
+                                           name="inpcampad" id="inpcampad">
+                                           <option selected>Seleccione...</option>
+                                            {% for i in dictDatos['CAMPAÑA'] %}
+                                            <option value="{{i}}">{{i}}</option>
+                                            {% endfor%}
+                                          </select>            
+                                        </div>
+                                      </div>
+                                      <!--CARGO-->
+                                      <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="selcargoad" class="form-label">Cargo</label>                                            
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <select required class="form-select form-select-sm" aria-label=".form-select-lg example"
+                                             name="selcargoad" id="selcargoad">
+                                             <option selected>Seleccione...</option>
+                                              {% for i in dictDatos['CARGO'] %}
+                                              <option value="{{i}}">{{i}}</option>
+                                              {% endfor%}
+                                            </select>            
+                                          </div>
+                                      </div>
+                                      <!--PERFIL-->
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="selperfilad" class="form-label">Perfil</label>
+                                              </div>
+
+                                              <div class="col-sm-6">
+                                                <select required class="form-select form-select-sm" aria-label=".form-select-lg example"
+                                                 name="selperfilad" id="selperfilad">
+                                                 <option selected>Seleccione...</option>
+                                                  {% for i in dictDatos['PERFIL'] %}
+                                                  <option value="{{i}}">{{i}}</option>
+                                                  {% endfor%}
+                                                </select>            
+                                              </div>
+                                        </div>
+                                        <!--Supervisor-->
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="selSuperAsead" class="form-label">Supervisor</label>
+                                              </div>
+                                              <div class="col-sm-6">
+                                                <select required class="form-select form-select-sm" aria-label=".form-select-lg example"
+                                                 name="selSuperAsead" id="selSuperAsead">
+                                                 <option selected>Seleccione...</option>
+                                                  {% for i in dictDatos['SUPERVISOR'] %}
+                                                    <option value="{{i}}">{{i}}</option>
+                                                  {% endfor%}
+                                                </select>            
+                                              </div>
+                                        </div>
+
+                                        <!--CIUDAD-->
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="selciudadad" class="form-label">Ciudad</label>
+                                              </div>
+                                              <div class="col-sm-6">
+                                                <select required class="form-select form-select-sm" aria-label=".form-select-lg example"
+                                                 name="selciudadad" id="selciudadad">
+                                                 <option selected>Seleccione...</option>
+                                                  {% for i in dictDatos['CIUDAD'] %}
+                                                  <option value="{{i}}">{{i}}</option>
+                                                  {% endfor%}
+                                                </select>            
+                                              </div>
+                                        </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="card shadow p-3 mb-5 bg-body rounded">
+                                <div class="form-card">
+                                    <h2 class="fs-title">Ingreso</h2>
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="selciudadad" class="form-label">Fecha Ingreso</label>                                            
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input required type="date" id="inpfecingad">
+                                        </div>
+                                    </div>
+                                    <!--Fecha salida-->
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="inpfecretad" class="form-label">Fecha Retiro</label>                                            
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="date" id="inpfecretad">
+                                        </div>
+                                    </div>
+                                    
+                                    <!--Login-->
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="selciudadad" class="form-label">Login</label>                                            
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input   required type="number" id="inplogasead">
+                                        </div>
+                                    </div>
+
+                                    <!--Estado-->
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="selciudadad" class="form-label">Estado Asesor</label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <select required name="selesasead" id="selesasead">
+                                                <option value="Activo">Activo</option>
+                                                <option value="Inactivo">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Estado-->
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="selbloqwh" class="form-label">Whatsapp</label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <select required name="selbloqwh" id="selbloqwh">
+                                                <option value="Activo">Activo</option>
+                                                <option value="Inactivo">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <div class="card">                                
+                                <div class="card-body">
+                                    <button type="submit" class="btn btn-primary" name="btnCreasead" id="btnCreasead">Crear</button>
+                                    <button type="submit" class="btn btn-danger" name="btnCanCreasead" id="btnCanCreasead">Cancelar</button>                                   
+                                </div>
+                            </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#btnCanCreasead").click(function(){
+        location.reload();
+    })
+
+    var csrf_token = "{{ csrf_token() }}";
+    $("#btnCreasead").click(function(e){                                   
+        for(var idele of  ["inpidad","inpnomad","inpemailad","inpcampad","selcargoad","selperfilad",
+                "selSuperAsead","selciudadad",
+                "inpfecingad","inplogasead","selesasead","selbloqwh","inpUsuRedad"]){
+               if(document.getElementById(idele).value=="" |document.getElementById(idele).value=="Seleccione..."){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Campos obligatorios',
+                    text: 'Diligencie todos los campos del formulario!'                    
+                    })                
+                return
+                }
+            }
+
+            var JsonDatosAse=[]        
+            for(var i  of ["inpidad","inpnomad","inpemailad","inpcampad","selcargoad","selperfilad","selSuperAsead","selciudadad",
+                    "inpfecingad","inplogasead","selesasead","selbloqwh","inpUsuRedad"]){
+                    JsonDatosAse.push(document.getElementById(i).value)             
+                    //JsonDatosAse.ArrayTitJson[rec]=document.getElementById(i).value
+                    rec+=1                       
+                    }
+                
+                var rec=0
+                const options = {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json',
+                        "X-CSRFToken": csrf_token,
+                    },
+                    //body: JSON.stringify({Gestion:'InsNueAse',ArrayDatos:JsonDatosAse})
+                };                
+        if (document.getElementById('btnCreasead').innerHTML=="Crear"){
+                options['body']=JSON.stringify({Gestion:'InsNueAse',ArrayDatos:JsonDatosAse})                              
+                fetch('/AppDataBase',options).then(response => response.text())
+                    .then(data => {
+                        const json = JSON.parse(data)
+                        Swal.fire({                        
+                            icon: 'success',
+                            title: 'Usario creado con exito',
+                            showConfirmButton: true,                        
+                            })
+                        e.preventDefault();
+                    })
+                }else{
+                options['body']=JSON.stringify({Gestion:'UpdAse',ArrayDatos:JsonDatosAse})
+                fetch('/AppDataBase',options).then(response => response.text())
+                    .then(data => {                        
+                        Swal.fire({                        
+                            icon: 'success',
+                            title: 'Usario editado con exito',
+                            showConfirmButton: true,                        
+                            })                        
+                    })
+                                        
+
+                }
+                e.preventDefault();        
+    })
+    
+    $("#formcedconsulta").submit(function(e){
+        var id = document.getElementById("inpcedasebus").value        
+        e.preventDefault();
+        e.target.reset();
+        const options = {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrf_token,
+        },
+        body: JSON.stringify({Gestion:'getdatasecon',cedase:id})
+        };
+        fetch('/GetDatoUser',options).then(response => response.text()).then(data => {
+            const json = JSON.parse(data);            
+            if(json['DicDatos']==""){
+                Swal.fire({                        
+                    icon: 'error',
+                    title: 'Usuario sin datos, no esta registrado',
+                    showConfirmButton: true,                        
+                    })
+            }else{
+                contador=0
+                for(var i of ["inpidad","inpnomad","inpemailad","inpcampad",
+                            "selcargoad","selperfilad","selSuperAsead","selciudadad",
+                        "inpfecingad","inpfecretad","inplogasead","selesasead","selbloqwh","inpUsuRedad"]){
+                    document.getElementById(i).value=json['DicDatos'][contador]
+                    contador+=1
+                }
+                
+                document.getElementById("btnCreasead").innerHTML="Editar"
+            }
+        })
+
+    })
+</script>    
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'BaseDashboard.html' %}
+
+{% block title %}CRM CND{% endblock %}
+
+{% block Body %}
+
+<h2>Modulo visualizacion Items calidad</h2>
+<div class="card">
+	<div class="card-body">
+    <div class="row">        
+        <div class="col">
+            <div class="form-group row align-items-center">
+              <label for="select_id_1" class="col-sm-2 col-form-label text-center">Segmento</label>
+              <div class="col-sm-10">
+                <select class="custom-select" name="selSegmento" id="selSegmento">
+                <script>
+						const selSegmento=document.getElementById('selSegmento')                    
+                		for(let mes of ['Despacho','Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+       								'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']){
+												let opt=document.createElement('option')
+												opt.value=mes                   
+												opt.innerHTML=mes                                                
+												selectormes.appendChild(opt)                        
+											}
+                      const nmes = new Date().getMonth() + 1;
+                      const JsonMes={1:'Enero', 2:'Febrero', 3:'Marzo', 4:'Abril', 5:'Mayo', 6:'Junio',
+       								              7:'Julio', 8:'Agosto', 9:'Septiembre', 10:'Octubre', 11:'Noviembre', 12:'Diciembre'}
+                      
+                      selectormes.value=JsonMes[nmes]
+                </script>
+              </select>
+              </div>
+            </div>
+            </div>
+				</div>
+      </div>
+  </div>
+
+{% endblock %}

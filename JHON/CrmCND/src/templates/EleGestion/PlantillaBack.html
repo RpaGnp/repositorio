@@ -1,0 +1,183 @@
+{% extends 'BaseDashboard.html' %}
+{% block title %}CRM DESPACHOS{% endblock %}
+
+{% block headers %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/styleEditorMuestras.css')}}">
+{% endblock %}
+
+
+
+
+{% block callscripts %}
+    <script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+           
+{% endblock %}
+{% block Body %}
+<h5>Plantilla de gestion backlog</h5>
+<div>
+  <div class="row m-2">        
+    <input class=" col-sm-1 btn btn-outline-success btn-sm" type="button" value="Tomar Gestion" id="btntakorden" name="btntakorden">
+    <input class=" col-sm-1 ms-2 btn btn-outline-info btn-sm" type="button" value="Futuras" id="btnverordenes" name="btnverordenes"
+      data-bs-toggle="modal" data-bs-target="#mdlhisordenes">
+    <input class=" col-sm-1 ms-2 btn btn-outline-warning btn-sm" type="button" value="Razones"
+      id="btnverrazon" name="btnverrazon"
+      data-bs-toggle="modal" data-bs-target="#mdlhisrazones">
+    <input type="text" value="{{ current_user.nombre }}" aria-label="Asesor" hidden>
+  </div>
+  <div class="row m-2">        
+    <div class="card shadow-lg">
+      <div class="card-body">
+        <table class="table table-bordered border-secondary" id="tblasigesbacklog">
+          <thead style="color: white; background-color: black;">
+            <tr>
+              <th>IdGestion</th>
+              <th>Tipo</th>
+              <th>Cuenta</th>
+              <th>Orden</th>
+              <th>Edad</th>
+              <th>Estado</th> 
+              <th>Razon</th>
+              <th>N° gestiones</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row m-2">
+    <div class="card m-2 shadow-lg">
+      <div class="card-body">
+        <form class="form-floating" action="" id="formnotasback">
+          <div class="row">
+            <div class="col-sm-3 form-floating">
+              <select class="form-control" id="Selgesconaase" aria-label="Contactabilidad" required>
+                <option value="">..::Seleccione::..</option>
+                <option value="Contacto">Contacto</option>
+                <option value="No Contacto">No Contacto</option>
+                <option value="No requiere gestion">No requiere gestion</option>
+              </select>
+              <label for="Selgesconaase">Contactabilidad</label>
+            </div>
+
+            <div class="col-sm-3 form-floating">
+            <select class="form-control" id="SelGesreaase" aria-label="Gestion Realizada" required>
+              <option value="">..::Seleccione::..</option>
+              
+            </select>
+            <label for="SelGesreaase">Gestion realizada</label>
+          </div>
+          
+          <input class="col-sm-auto btn btn-outline-success" type="button" value="+" id="btnadgestel">
+          </div>
+          <!--Campos de telefonos-->
+          <div class="row m-2">            
+            <div id="rownumtel">
+        
+            </div>
+          </div>
+
+          <div class="row m-2 form-floating">
+            <textarea class="form-control" id="textobsgesase" rows="10" rows="10"  
+            aria-label="Observaciones" style="height: 100px" required></textarea>
+            <label for="textobsgesase">Observaciones</label>
+          </div>
+          <div class="row m-2">
+            <input class="col-sm-1 btn btn-outline-primary" type="button" id="btngennotgesase" value="Generar">
+            <input class="col-sm-1 ms-2 btn btn-outline-info" type="button" id="btncopnotges" value="Copiar">
+            <input class="col-sm-1 ms-2 btn btn-outline-success" type="button" id="btnsubmittip" value="Tipificar">
+          </div>
+        </form>
+        <div class="row m-2 form-floating">
+          <textarea class="form-control" id="textNotgesase" rows="10" rows="10"  aria-label="Notas Gestion" style="height: 200px"></textarea>
+          <label for="textNotgesase">Notas Gestion</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--Modal para ver historico-->
+<div class="modal" tabindex="-1" id="mdlhisordenes">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ordenes Futuras Backlog</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table" id="tblhisfuturas">
+          <thead style="color: white;background-color: black;">
+            <tr>              
+              <th>cuenta</th>
+              <th>Orden</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!--Datos de 5 ots pendientes de hgestionar  -->
+
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-info" id="btnget5back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>
+            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"></path>
+          </svg>
+        </button> 
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>        
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+  <!--Modal para ver historico de razones-->
+<div class="modal" tabindex="-1" id="mdlhisrazones">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalle de razon orden</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table" id="tblhisrazones">
+          <thead style="color: white;background-color: black;">
+            <tr>
+              <th>Notas Razones</th>
+
+            </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-info" id="btnget5back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>
+            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"></path>
+          </svg>
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+</div>
+<script src="{{ url_for('static', filename='/js/classes/CallApis.js') }}"></script>     
+<script src="{{ url_for('static', filename='/js/funcionesApp/FuncionesBacklog/Fungesbacklog.js') }}"></script>
+<script>
+  new handlegesBackog("{{ csrf_token() }}")  
+</script>
+{% endblock %}
+
+

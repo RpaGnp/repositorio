@@ -1,0 +1,123 @@
+{% extends 'BaseDashboard.html' %}
+
+{% block title %}CRM CND{% endblock %}
+
+{% block Body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center text-black font-weight-light my-4">Actualizar contraseña</h3></div>
+                <div class="card-body">
+                    <form id="formupdclave">                                
+                        <div class="card-body input-group mb-3">                            
+                            <input required type="number" class="form-control" id="inpcedaseupd"
+                             name="inpcedaseupd" placeholder="Cedula Actual"/>                            
+                            <button class="btn btn-outline-secondary" id="btnbuscedaseupd" type="submit">Buscar</button>
+                            
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input disabled class="form-control" id="inputupdpw" type="password" placeholder="Create a password" />
+                                    <label for="inputupdpw">Nueva Contraseña</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input disabled  class="form-control" id="inputupdpwconf" type="password" placeholder="Confirm password" />
+                                    <label for="inputupdpwconf">Confirmar contraseña</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 mb-0">
+                            <div class="d-grid"><a class="btn btn-primary btn-block" id="btnupdpw" >Cambiar</a></div>
+                        </div>
+                        <hr>
+                        <div class="alert alert-success allert-dismissible" id="alertUpdCon" role="alert">
+                            <strong id="TextAlerTCamCon">---</strong>
+                            <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"
+                            ></button>
+                        </div>
+                    </form>
+                </div>                        
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var csrf_token = "{{ csrf_token() }}";
+    $("#alertUpdCon").hide()
+    $("#formupdclave").submit(function(e){        
+        e.preventDefault();
+        const options = {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrf_token,
+        },
+        body: JSON.stringify({Gestion:'getdatasecon',cedase:document.getElementById("inpcedaseupd").value})
+        };
+        fetch('/GetDatoUser',options).then(response => response.text()).then(data => {
+            const json = JSON.parse(data);            
+            if(json['DicDatos']==""){
+                Swal.fire({                        
+                    icon: 'error',
+                    title: 'Usuario sin datos, no esta registrado',
+                    showConfirmButton: true,                        
+                    })
+                    for(var i of ["inputupdpw","inputupdpwconf"]){
+                    document.getElementById(i).setAttribute("disabled",true)
+                }      
+            }else{                  
+                 Swal.fire({                        
+                        icon: 'success',
+                        title: 'Usuario '+json['DicDatos'][1],
+                        showConfirmButton: true,                        
+                        })
+                for(var i of ["inputupdpw","inputupdpwconf"]){
+                    document.getElementById(i).removeAttribute("disabled")
+                }
+                document.getElementById('inpcedaseupd').setAttribute("disabled",true)
+            }           
+        })})        
+    
+    $("#btnupdpw").click(function(){        
+        if(document.getElementById("inputupdpw").value!=document.getElementById("inputupdpwconf").value){
+            $("#alertUpdCon").show()
+            $("#TextAlerTCamCon").html("Las nuevas contraseñas no inciden!")
+        }else{
+            const options = {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                "X-CSRFToken": csrf_token,
+            },
+            body: JSON.stringify({Gestion:'updpwaseext',IdUsuario:document.getElementById("inpcedaseupd").value,NuePwUsu:document.getElementById('inputupdpw').value})
+            };
+            fetch('/UpdCredenciales',options).then(response => response.text())
+                .then(data => {
+                    Swal.fire({
+                          position: 'top-end',
+                          icon: 'success',
+                          title: 'Contraseña actualiza con exito',
+                          showConfirmButton: false,
+                          timer: 3000
+                        })
+                })
+                
+
+        }})
+    
+    
+
+</script>
+
+
+{% endblock %}

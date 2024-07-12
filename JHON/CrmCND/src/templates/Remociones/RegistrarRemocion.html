@@ -1,0 +1,118 @@
+{% extends 'BaseDashboard.html' %} {% block title %}CRM CND{% endblock %}
+{% block headers %}
+    <script src="{{ url_for('static', filename='js/funcionesApp/funcionesFormacion/FunRemocion.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/classes/CallApis.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+    <link
+      href="{{ url_for('static', filename='css/EstilosRemociones.css') }}"
+      rel="stylesheet"
+    />
+{% endblock %}
+
+
+
+
+{% block Body %}
+<h5>Registro de remociones</h5>
+<hr>
+<div class="row ms-2">
+    <div>
+        <card class="card">
+        <form id="FormRemocion" class="row mt-2 ms-2 mb-2">            
+            <div class="col-auto">                
+                <label for="IdAsesor">Cedula</label>
+            </div> 
+            <div class="col-auto">
+            <input type="text" class="form-control" id="IdAsesor" required>                
+            </div>                
+            <div class="col-auto">
+                <input type="button" class="btn btn-info" value="Buscar" onclick="HandleForm.BuscarAsesor()">
+            </div>               
+            <hr>
+            <div class="row">                    
+                    <table class="table" style="color: black;border: 1 solid black;">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Campaña</th>
+                                <th>Supervisor</th>
+                                <th>Regional</th>                                
+                            </tr>
+                        </thead>
+                        <tbody id="tdyinfasesor">
+                            
+                        </tbody>
+                    </table>                        
+            </div>
+            <div class="row">
+                <div class="col-auto"> 
+                    <label for="inpnotasesor">Nota Asesor</label>                        
+                </div>
+                <div class="col-auto">
+                <input type="number" class="form-control" id="inpnotasesor" required>
+                </div>
+            
+                <div class="col-auto">
+                    <label class="form-label" for="SelSegmento">Segmento</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" name="SelSegmento" id="SelSegmento" title="selector segmento">                            
+                        <option value="">..::Seleccione::..</option>
+                        <option value="MASIVO">MASIVO</option>
+                        <option value="HHPP">HHPP</option>                        
+                    </select>
+                </div>
+            </div>
+        <hr>
+        <div class="row mb-2 mt-2 table-container">
+            <table class="table table-border">
+                <thead>
+                    <tr>
+                        <th>Id Item</th>
+                        <th>Item</th>
+                        <th>Cumplimiento</th>
+                    </tr>
+                </thead>
+                <tbody id="tblbdyiteseg">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="row mb-2 mt-2">
+            <div class="form-floating">
+                <textarea class="form-control" cols="30" rows="10" required ="Observaciones de la remocion" id="Inpobsrem"></textarea>
+                
+                <label for="Inpobsrem">Observaciones</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <input class="btn btn-success" type="button" value="Agregar" onclick="HandleForm.SendFormRem()">
+
+            </div>
+        </div>
+    </form>
+    </card>
+    </div>
+</div>
+
+
+
+<script>
+    
+        const handleTablas = new handleTableAsesores("{{ csrf_token() }}",'Tbldatasesor')
+        handleTablas.ConstruirHeadTable(["IdAsesor","Nombre","Cargo","N° Remociones","Detalles"])
+        handleTablas.ConstruirBody()    
+
+        const HandleForm =new handleformRemocion("{{ csrf_token() }}","{{ current_user.id }}")
+        
+        // add funtion to bring the items
+        document.getElementById('SelSegmento').addEventListener("change",async (e)=>{
+            await HandleForm.getitems(e.target.value)
+        })
+
+
+    
+
+</script>
+{% endblock %}

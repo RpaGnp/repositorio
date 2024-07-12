@@ -1,0 +1,1279 @@
+{% extends 'BaseDashboard.html' %} {% block title %}CRM CND{% endblock %}
+{% block Body %}
+
+<style>
+    .contenthistorial,.table{
+        color: black !important;
+        font-size: small !important;
+    }
+
+
+
+</style>
+
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <input type="text" class="form-control" id="datatable-search-input" placeholder="Buscar" onkeyup="GetFilterData()"/>
+
+        </div>
+      </div>
+
+    <div id="contenthistorial">
+        <table class="table sortable" id="Tbl-HisCasos">
+            <caption>Lista de casos</caption>
+            <thead>
+            <tr>
+                <th scope="col"># Caso</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Campaña</th>
+                <th scope="col">Ciudad</th>
+                <th scope="col">Calidad</th>
+                <th scope="col">Nota</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Detalle</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if arrayGestionH is not none and arrayGestionH|length > 0 %}
+                {% for i in arrayGestionH %}
+                    <tr>
+                        <td> {{ i[0] }}</td> <!--idmonitorieo-->
+                        <td> {{ i[1] }}</td>                    <!--fecha monitorieo-->
+                        <td> {{ i[3] }}</td>    <!--nombre-->
+                        <td> {{ i[4] }}</td>    <!--campaña-->
+                        <td> {{ i[8] }}</td>    <!--PERFIL-->
+                        <td> {{ i[9] }}</td>
+
+                        <td> {{ i[10] }}</td>
+                        <td> {{ i[11] }}</td>
+                        <script>
+
+                        </script>
+
+                        <td style="width: 10%;">
+                            <div class="row">
+                                {% if current_user.cargo in ["Gerente","FORMADOR","LIDER CALIDAD","SUPERVISOR","CALIDAD","DESARROLLO","JEFE DE OPERACIONES","LIDER FORMACION","LIDER CALIDAD"] %}
+                                <!--Botones ver caso-->
+                                <div class="col-sm-4">
+                                    <button type="Button" id="btn_verCaso" class="btn btn-light btn_verCaso">
+                                        <img width="12px" height="5%"src="{{url_for('static', filename='/img/maxglasss.png') }}"></img>
+
+                                    </button>
+                                </div>
+                                    <!--Botones eliminar caso-->
+                                    {% if current_user.cargo  in ["LIDER CALIDAD","Gerente"] %}
+                                        <div class="col-sm-4">
+                                            <button type="Button" id="btn_DelCaso" class="btn btn-light btn_DelCaso">
+                                                <img width="12px" height="5%" src="{{url_for('static', filename='/img/Delcaso.png') }}"></img>
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if current_user.cargo in ["ASESOR"] %}
+                                    <!--Botones Firmar caso asesor-->
+                                    <div class="col-sm-4">
+                                        <button type="Button" id="btn_ediCaso"  class="btn btn-light btn_ediCaso">
+                                            <img width="12px" height="5%"src="{{url_for('static', filename='/img/edita.png') }}"></img>
+                                        </button>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+            <h5>No existen monitoreos para el asesor</h5>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--Colapse compromiso-->
+  <div class="modal top fade" id="MdlCompCaso" tabindex="-1" aria-labelledby="MdlCompCaso" aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false">
+    <div class="modal-dialog modal-lg  modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Gestion de muestras</h5>
+        </div>
+            <table>
+                <thead>
+                    <th>
+                        Cuenta
+                    </th>
+                    <th>
+                        Orden
+                    </th>
+                </thead>
+                <tr>                            
+                    <td id="tdCuenta"></td>
+                    <td id="tdOrden"></td>
+                </tr>
+            </table>
+            <table class="table table-striped">
+                <thead>
+                    <tr  scope="col">
+                        <h5 class="card-header" style="color:black; text-align: center;">Items afectados</h5>
+                    </tr>
+                    <tr>
+                        <td  scope="col">item</td>
+                        <td  scope="col">Tipo</td>
+                        <td  scope="col">Peso</td>
+                        <td  scope="col">Calificacion</td>
+                    </tr>
+                </thead>
+                <tbody id="tbl_HisMonComAse" style="color:black ;text-align: left;" >
+                </tbody>
+            </table>
+            
+        <div class="modal-body shadow p-3 mb-5 bg-body rounded">
+            {% if current_user.perfil in ["SUPERVISOR","LIDER CALIDAD","FORMADOR","CALIDAD","JEFE DE OPERACIONES","Desarrollo"] %}
+                <div class="form-group">
+                    <label for="lblComSuper">Compromiso Supervisor</label>
+                    <textarea class="form-control" id="lblComSuper" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                <label for="lblCompAge">Compromiso Agente</label>
+                    <textarea class="form-control" id="lblCompAge" rows="3"></textarea>
+                </div>
+            {% else %}
+                <div class="Row">
+                <h5>Observaciones</h5>
+                <p style="text-align: left;" id="Lblobsmuestra"></p>
+              </div>
+                <div class="row">
+                  <table class="table table-hover table-bordered">
+                      <thead>
+                        <tr>
+                          <th scope="col">Muesta</th>
+                          <th scope="col">Estado</th>
+                          <th scope="col">Fecha</th>
+                          <th scope="col">Hora</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row" id="lblNumMuesCopAse">99999</th>
+                          <td id="lblEstCopAse">--</td>
+                          <td id="lblFecComAse">---</td>
+                          <td id="lblHorComAse">---</td>
+                        </tr>
+                        <tr>
+                          <td colspan="1" style="color:black ;">Compromiso</td>
+                          <td colspan="3" id="LblCom" style="padding: 2px 2px 2px 0px; ">
+                              <textarea type="text" style="width: 100%;padding: 10px;margin: 0px;" name="lblCompAge" id="lblCompAge"></textarea>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+              </div>
+          {% endif %}
+        </div>
+        <br/>
+        <div class="alert alert-success allert-dismissible" id="alertCompGua" role="alert">
+            <strong>Compromiso asesor guardado con exito</strong>
+            <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            ></button>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="btncloModCopAse"class="btn btn-secondary" data-mdb-dismiss="modal">
+            Cerrar
+          </button>
+          <button type="button" id="btnGuaCompAge" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Monitoreo Modal-->
+<div
+  class="modal fade bd-example-modal-lg"
+  id="FormCalidadModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myLargeModalLabel"
+  aria-hidden="true"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Cerrar
+        </button>
+        <button type="button" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .modal-content,.modal-body,.modal-body,.card,h6{
+      color: black;
+  }
+</style>
+
+<div class="modal fade modal-fullscreen-xxl-down" id="Mdl-InfoAfect" tabindex="-1"
+     role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
+     style="width: 100%;">
+    <div class="modal-dialog" style="max-width: 90%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary">
+                <h5 class="text-end modal-title" style="color:white;justify-content: right; " id="ModalHCasosTit">Detalles caso</h5>
+            </div>
+            <!--CARD CASO-->
+            <div class="modal-body" style="height: 100%;width: 100%;overflow-y: auto;">
+                <div class="card shadow p-3 mb-3 bg-white rounded">
+                    <div class="row mt-1">
+                        <div class="col-sm-1">
+                            <h6 class="card-text">Numero</h6>
+                        </div>
+                        <div class="col-sm-2">
+                            <span class="lblNunMue" id="lbl_caso"></span>
+                        </div>
+                        
+                        <div class="col-sm-1">
+                            <h6 class="card-text">Fecha</h6>
+                        </div>
+                        <div class="col-sm-2">
+                            <span id="lbl_fecha"></span>
+                        </div>
+
+                        <div class="col-sm-1">
+                            <h6 class="card-text">Hora</h6>
+                        </div>
+                        <div class="col-sm-1">
+                            <span id="lbl_hora"></span>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <span class="card-text">Estado</span>
+                        </div>
+                        <div class="col-sm-2">
+                            <span id="lbl_EstCaso">Abierto</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="color:black; font-size:small;text-align: left;">
+                    <!--Card auditor-->
+                    <div class="col-6">
+                        <div class="card shadow-lg p-3 mb-3 bg-white rounded">
+                            <h5 class="card-header bg-gradient-primary" style="color:white ;">Auditor</h5>
+                            <div class="card-body">
+                                <div class="row text-dark">
+                                    <div class="col-5">
+                                        <strong>Nombre auditor</strong>
+                                    </div>
+                                    <div class="col-7">
+                                        <p class="card-text" id="lbl_NomAud"></p>
+                                    </div>
+                                </div>
+                                <div class="row text-dark  mt-1">
+                                    <div class="col-3">
+                                        <strong class="card-title">Perfil</strong>
+                                    </div>
+                                    <div class="col-3">
+                                        <p class="card-text" id="lbl_perAud"></p>
+                                    </div>
+                                    <div class="col-3">
+                                        <strong class="card-title">Campaña</strong>
+                                    </div>
+                                    <div class="col-3">
+                                        <p class="card-text" id="lbl_CamAud"></p>
+                                    </div>
+                                </div>
+                                <div class="row text-dark  mt-1">
+                                    <div class="col-3">
+                                        <strong class="card-title">Tipo monitoreo</strong>
+                                    </div>
+                                    <div class="col-3">
+                                        <p class="card-text" id="lbl_TipMon"></p>
+                                    </div>
+                                    <div class="col-3">
+                                        <strong class="card-title">Fecha Monitoreo</strong>
+                                    </div>
+                                    <div class="col-3">
+                                        <p class="card-text" id="lbl_FecMon"></p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--Card Asesor-->
+                    <div class="col-6">
+                        <div class="card shadow-lg p-3 mb-3 bg-white rounded">
+                            <h5 class="card-header bg-gradient-primary" style="color:white ;">Asesor</h5>
+                            <div class="card-body">
+                            <div class="row text-dark">
+                                <div class="col-5">
+                                    <span style="text-transform: capitalize;font-weight: bold;">Nombre asesor</span>
+                                </div>
+                                <div class="col-7">
+                                    <p class="card-text" id="Lbl-nomAse"></p>
+                                </div>
+                            </div>
+
+                            <div class="row text-dark">
+                                <div class="col-3">
+                                    <strong>Perfil</strong>
+                                </div>
+                                <div class="col-5">
+                                    <p class="card-text" id="lbl-PerAse"></p>
+                                </div>
+
+                                <div class="col-2">
+                                    <strong>Estado</strong>
+                                </div>
+                                <div class="col-2">
+                                    <p  class="card-text" id="lbl_estase" ></p>
+                                </div>
+                            </div>
+
+                            <div class="row text-dark">
+                                <div class="col-3">
+                                        <strong>Supervisor</strong>
+                                    </div>
+                                    <div class="col-9">
+                                        <p id="lbl_supase" class="card-text"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+                    <h5 class="card-header bg-gradient-primary" style="color:white ;">Detalle Monitorieo</h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="div col"></div>
+                            <div class="div col">
+                                <table class="table" id="tblNotas">
+                                    <thead>
+                                        <tr class=" bg-gradient-info" style="color:white ;">
+                                            <th scope="Col">Nota Monitoreo</th>
+                                            <th colspan="1" scope="Col">Cumple</th>
+                                            <th colspan="1" scope="Col">No cumple</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="border: 1px black solid ;">
+                                        <tr>
+                                            <th scope="col" id="lbl_hNotMonTotal">100</th>
+                                            <th scope="col" id="lbl_hNotMonec">0</th>
+                                            <th scope="col" id="lbl_hNotMonenc">0</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="div col"></div>
+                        </div>
+                        <div class="row">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr  scope="col">
+                                        <h5 class="card-header" style="color:black; text-align: Center;">Items afectados</h5>
+                                    </tr>
+                                    <tr>
+                                        <td  scope="col">item</td>
+                                        <td  scope="col">Tipo</td>
+                                        <td  scope="col">Peso</td>
+                                        <td  scope="col">Calificacion</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_HisMon" style="color:black ;text-align: left;" >
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <h5>Observaciones</h5>
+                            <p style="text-align: left;" id="ObseGesMon">--</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-lg p-3 mb-3 bg-white rounded" id="cardCompromiso">
+                <div class="accordion" id="accordionPanelsStayOpenExample">
+                    <div class="accordion-item">
+                        <div class="accordion-item">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                    <h5  style="color:black ;">Compromisos</h5>
+                                </button>
+                                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                                    <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="card border-dark mb-3">
+                                                <div class="card-header">
+                                                    Compromiso Asesor
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table table-hover table-bordered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th scope="col">Muesta</th>
+                                                            <th scope="col">Estado</th>
+                                                            <th scope="col">Fecha</th>
+                                                            <th scope="col">Hora</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!--pista-->
+                                                        <tr>
+                                                            <th scope="row" class="lblNunMue" id="lblNunMue">99999</th>
+                                                            <td id="lblEstCopAse">--</td>
+                                                            <td id="lblFecComAse">---</td>
+                                                            <td id="lblHorComAse">---</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="1" style="color:black ;">Compromiso</td>
+                                                            <td colspan="3"  style="padding: 2px 2px 2px 0px; ">
+                                                                <textarea 
+                                                                style="width: 100%;padding: 10px;margin: 0px;"
+                                                                name="lblCompAge" id="lbl_comase"></textarea>
+                                                            </td>
+
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="row">
+                                                        <div class="col">                                                            
+                                                            {% if current_user.perfil in ["LIDER CALIDAD","JEFE DE OPERACIONES","Gerente"] %}
+                                                                <a type="button" class="btn btn-danger" id="btndelcomase">                                                                
+                                                                    Eliminar
+                                                                </a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col">
+                                            <div class="card border-dark mb-3">
+                                                <div class="card-header">
+                                                    Compromiso Supervisor
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table table-hover table-bordered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th scope="col">Muesta</th>
+                                                            <th scope="col">Estado</th>
+                                                            <th scope="col">Fecha</th>
+                                                            <th scope="col">Hora</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <th scope="row" class="lblNunMue" id="lblNunMue">99999</th>
+                                                            <td id="lblEstCopSup">--</td>
+                                                            <td id="lblFecComSup">---</td>
+                                                            <td id="lblHorComSup">---</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="1" style="color:black ;">Compromiso</td>
+                                                            <td colspan="3" id="LblCom" style="padding: 2px 2px 2px 0px; ">
+                                                                <textarea type="text" style="width: 100%;padding: 10px;margin: 0px;"
+                                                                name="lblCompSup" id="lblCompSup"></textarea> 
+                                                            </td>
+
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="alert alert-success allert-dismissible" id="alertCompSup" role="alert">
+                                                        <strong>Compromiso supervisor guardado con exito</strong>
+                                                        <button
+                                                        type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="alert"
+                                                        aria-label="Close"
+                                                        ></button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <a type="button" class="btn btn-primary" id="btnGuaCopSup">
+                                                                Guardar
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<h1>{{ current_user.cargo }}</h1>-->
+                {% if current_user.perfil in ["SUPERVISOR","LIDER FORMACION","LIDER CALIDAD","FORMADOR","CALIDAD","JEFE DE OPERACIONES","Desarrollo"] %}
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                    <h5  style="color:black ;">Solicitudes</h5>
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                                <div class="accordion-body" id="DesSolicitudes">
+                                    <div class="col" id="EstSoli">
+                                        <table class="table table-condensed table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Acciones</th>
+                                                    <th>#</th>
+                                                    <th>Tipo</th>
+                                                    <th>Causa</th>
+                                                    <th>Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tblhissol">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!--Nueva saolicitud-->
+                                    <div class="row" id="conButSol">
+                                        {% if current_user.perfil in["SUPERVISOR"]  %}
+                                            <button  id="btnaddnuesol" class="btn btn-info  btn-sm accordion-button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                                            style="width:10% ;">Nueva</button>
+                                        {% endif %}
+                                        <!--Formulario para nueva solicitud-->
+                                        <div id="collapseOne" class="accordion-collapse collapse hide" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                              <div class="ActNueSol">
+                                                  <div class="border rounded p-4">
+                                                      <h4 class="mb-3">Nueva solicitud</h4>
+                                                      <!-- columns -->
+                                                      <div class="form-group row ">
+                                                          <label class="col-sm-1 col-form-label"></label>
+                                                          <div class="col-sm-11">
+                                                          <div class="form-row align-items-center">
+                                                          <div class="col-md-6 mb-3">
+                                                      <!-- select -->
+                                                          <label for="seltipsol">Tipo solicitud</label>
+                                                          <select class="custom-select" name="seltipsol" id="seltipsol">
+                                                              <option value="Seleccione...">Seleccione...</option>
+                                                              <option value="Revaluacion">Reevaluacion</option>
+                                                              <option value="Novedad">Novedad</option>
+                                                          </select>
+                                                              </div>
+
+                                                          <div class="col-md-6 mb-3">
+                                                      <!-- select -->
+                                                          <label for="selcausol">Causa</label>
+                                                          <select class="custom-select" name="selcausol" id="selcausol">
+                                                              <option value="Seleccione...">Seleccione...</option>
+                                                              <option value="vacaciones">Vacaciones</option>
+                                                              <option value="Incapacidad">Incapacidad</option>
+                                                              <option value="Permisos">Permisos</option>
+                                                              <option value="FaltaInjustificada">Falta injustificada</option>
+                                                              <option value="Calamidaddomestica">Calamidad domestica</option>
+                                                              <option value="Retiro">Retiro</option>
+                                                              <option value="otros">otros</option>
+                                                          </select>
+                                                          </div>
+
+                                                      </div>
+                                                          </div>
+                                                      </div>
+
+                                                      <!-- textarea -->
+                                                      <div class="form-group row ">
+                                                          <label for="texdessol" class="col-sm-1 col-form-label">Descripcion:</label>
+                                                          <div class="col-sm-11">
+                                                              <textarea class="form-control" rows="2" name="texdessol" id="texdessol" required></textarea>
+                                                              <small class="text-muted form-text">Indique los motivos de su solicitud</small>
+                                                          </div>
+                                                      </div>
+                                                      <!-- button -->
+                                                      <button type="submit" class="btn btn-primary btn-sm" name="btnsavsol" id="btnsavsol">Enviar</button>
+                                              </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="collapseRespSol" class="accordion-collapse collapse hide" aria-labelledby="headingRSOL" data-bs-parent="#accordionExample">
+                                              <div class="ActNueSol">
+                                                  <div class="border rounded p-4">
+                                                      <h4 class="mb-3">Responder solicitud</h4>
+                                                    </div>
+                                                    <div class="border rounded p-4">                                                      
+                                                        <div class="form-group row ">
+                                                            <label for="texressol" id="lbltexressol" class="col-sm-2 col-form-label" value="">Respuesta a solicitud</label>
+                                                            <div class="col-sm-10">
+                                                                <textarea class="form-control" rows="3" name="TexArearResSol" id="texressol" required></textarea>
+                                                                <small class="text-muted form-text">Indique una respuesta a la solicitud</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row ">
+                                                            <label for="btnsavsol" class="col-sm-2 col-form-label"></label>
+                                                            <div class="col-sm-10">
+                                                            <button type="submit" class="btn btn-primary btn-sm" name="btnressol" id="btnressol-">Enviar Respuesta</button>
+                                                            </div>
+                                                        </div>                                                      
+                                                  </div>
+                                              </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+
+            <div class="modal-footer">
+                <button type="button" id="btn-CloseModalFormMon"  class="btn btn-secondary " data-dismiss="modal">Cerrar</button>
+                <button type="button" id="btn-GuaMonSp"  class="btn btn-primary " data-dismiss="modal">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="ModalConfDelMon">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Operacion exitosa!</h4>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body" id="AlertCasoDel">
+          Muestra # eliminada con exito!
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" id="btnCerrModDel" class="btn btn-danger" data-bs-dismiss="modal">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script src="{{ url_for('static', filename='/js/funcionesApp/sorttable.js') }}"></script>
+
+<script src="{{ url_for('static', filename='/js/funcionesApp/FunionesHisMon.js') }}"></script>
+
+<script src="{{ url_for('static', filename='/js/funcionesApp/ArbolFunciones.js') }}"></script>
+
+<script>
+    var csrf_token = "{{ csrf_token() }}";    
+    var btnSelection = document.getElementsByClassName('btn_verCaso');
+    $("#btndelcomase").click(function(){
+        var idmuestra = $('#lblNunMue').text();
+        options=HeaderFetch(csrf_token,{Gestion:"Delcompase",Caso:idmuestra})        
+        fetch("/AppDataBase",options).then(response => response.text())
+            .then(data => {
+                Swal.fire({                        
+                    icon: 'success',
+                    title: 'Compromiso asesor eliminado',
+                    showConfirmButton: true,                        
+                    })
+                for(i of ["lblEstCopAse","lblFecComAse","lblHorComAse","lbl_comase"]){
+                    document.getElementById(i).value=""
+                }
+            })  
+    })
+
+    $("#Tbl-HisCasos").on('click','#btn_verCaso',function(){
+        //remove('Mdl-InfoAfect')
+        $("#alertCompSup").hide()
+
+        //limpiar campos modal
+        for(var i of ["lblCompSup","lblCompSup"]){
+            document.getElementById(i).value=""
+        }
+
+        var currentRow=$(this).closest("tr");
+        var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+        
+        options=HeaderFetch(csrf_token,{Caso:col1})        
+        fetch("/DetCaso",options).then(response => response.text())
+            .then(data => {
+                $('#Mdl-InfoAfect').modal('toggle');
+                const json = JSON.parse(data);                
+                document.getElementById("ModalHCasosTit").innerHTML="Detalles caso: Orden "+json[15]+" Cuenta: "+json[14]
+                ArrayDatos=["05","13","07","26","10","09","11","12","13",'00','01','02','03','22','23','24','25','21']
+                contador=0
+                for(var idtag of ["#lbl_caso","#lbl_fecha","#lbl_hora","#lbl_EstCaso","#lbl_NomAud","#lbl_perAud","#lbl_CamAud","#lbl_TipMon","#lbl_FecMon","#Lbl-nomAse",
+                        "#lbl-PerAse","#lbl_supase","#lbl_estase","#lbl_hNotMonTotal","#lbl_hNotMonec","#lbl_hNotMonenc","#lbl_hNotMonte","#ObseGesMon"]){                    
+                    $(idtag).html(json[ArrayDatos[contador]])
+                    contador+=1    
+                }
+
+                $(".lblNunMue").each(function(index, obj){$(this).html(json['05'])})
+
+                $("#lblEstCopAse").html(json['27'])
+                if(json['27']=="Compromiso Agente"){
+                    //document.getElementById("btnGuaCopSup").remove()
+                    document.getElementById("lbl_comase").disabled = true;
+                }else{
+                    document.getElementById("lbl_comase").disabled = false;
+                }
+                
+                // mostrar card compromisos segun la nota de calidad
+                if (parseInt(json['22'],10)==100){
+                    document.getElementById("cardCompromiso").setAttribute("hidden","true")                    
+                }else{
+                    document.getElementById("cardCompromiso").removeAttribute("hidden")                    
+                    
+                }
+
+                $("#lblFecComAse").html(json['29'])
+                $("#lblHorComAse").html(json['30'])
+                document.getElementById("lbl_comase").value=json[28]
+
+                $("#lblEstCopSup").html(json['31'])
+                $("#lblFecComSup").html(json['33'])
+                $("#lblHorComSup").html(json['34'])
+                document.getElementById("lblCompSup").value= json['32'] 
+                if(json['31']=="Compromiso Supervisor"){
+                    document.getElementById("btnGuaCopSup").setAttribute("hidden","true")
+                    document.getElementById("lblCompSup").disabled = true;
+                    document.getElementById("lblCompSup").required = false;
+                }else{
+                    document.getElementById("lblCompSup").disabled = false;
+                    document.getElementById("lblCompSup").required = true;
+                    document.getElementById("btnGuaCopSup").removeAttribute("hidden")
+
+                }
+
+                let list = document.getElementById("tbl_HisMon");
+                list.innerHTML = ""
+                for(var row of json['items']){
+                    var tr = document.createElement("tr");
+                    var tempcodetd =`
+                        <td>${row[0]}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]*100}%</td>
+                        <td>${row[3]}</td>
+                    `
+                    tr.innerHTML=tempcodetd
+                    list.appendChild(tr)
+                }
+                return
+                try {
+                    var lista = document.getElementById("tblhissol");                
+                    while (lista.hasChildNodes()) {
+                        lista.removeChild(lista.firstChild);
+                    }
+                } catch (error) {
+                    console.error("!",error);                
+                    }
+                
+                // listar las solicitudes
+                for (var solicitud of json['Solicitudes']){
+                    //vuelve
+                    var tr = document.createElement("tr");
+                    tr.setAttribute("class", "sub-container");                    
+                    var colbtn = document.createElement("td");
+                    // boton ver detalles
+                    var btnEspanSol = document.createElement("button");
+                    btnEspanSol.setAttribute("class", "btn btn-success exploder me-3");
+                    btnEspanSol.setAttribute("value", solicitud[0]);                    
+                    btnEspanSol.addEventListener("click",ExpanderDetalles)
+                    colbtn.appendChild(btnEspanSol);
+
+
+                    var iconbtnVer=document.createElement("li")
+                    iconbtnVer.setAttribute("class","fas fa-fw fa-folder-open")
+                    btnEspanSol.appendChild(iconbtnVer)
+
+                    // boton eliminar solicitud
+                    var btnDelSol = document.createElement("button");
+                    btnDelSol.setAttribute("class", "btn btn-danger");
+                    btnDelSol.setAttribute("value", solicitud[0]);                    
+                    btnDelSol.addEventListener("click",Delcasosel)
+                    colbtn.appendChild(btnDelSol);
+
+                    var iconbtnVer=document.createElement("li")
+                    iconbtnVer.setAttribute("class","fas fa-fw fa-trash")
+                    btnDelSol.appendChild(iconbtnVer)
+                    
+                    // celda solicitante
+                    var colIdsol = document.createElement("td");
+                    colIdsol.innerHTML = solicitud[0];
+                    // celda fecha
+                    var colTipo = document.createElement("td");
+                    colTipo.innerHTML = solicitud[1];
+                    // celda detalles
+                    var colCausa = document.createElement("td");
+                    colCausa.innerHTML = solicitud[2];
+                    // celda estado
+                    var colEstado = document.createElement("td");
+                    colEstado.innerHTML = solicitud[3];
+                    
+                        var rowhide = document.createElement("tr")
+                        rowhide.setAttribute("class","explode hide")
+                        // elementos ocultos detalles y respuestas a las solicitudes
+                        
+                        var colhide1 = document.createElement("td")
+                        colhide1.setAttribute("colspan","5")
+                        colhide1.style.background="#CCC"
+                        colhide1.style.display="none"
+
+                        rowhide.appendChild(colhide1)
+                        //???.appendChild(rowhide)
+                        var tabledetalles = document.createElement("table")
+                        tabledetalles.setAttribute("class","table table-condensed")
+
+                        colhide1.appendChild(tabledetalles)
+
+                        var thead = document.createElement("thead")
+                        tabledetalles.appendChild(thead)
+                        tabhidtr= document.createElement("tr")
+                        thead.appendChild(tabhidtr)
+                        for(var i of ["Solicitante","Fecha y hora","Detalles","Opciones"]){
+                            x=document.createElement("th")
+                            x.innerHTML=i
+                            tabhidtr.appendChild(x)
+                        }
+                    tbodytblhide=document.createElement("tbody")
+                    tabledetalles.appendChild(tbodytblhide)
+                    tabledetalles.setAttribute("id","idTblDetalle"+solicitud[0])
+
+                    // crear las filas dependiendo las respuestas
+                    trdetalle=document.createElement("tr")
+                    trdetalle.setAttribute("id","id"+solicitud[0])
+                    tbodytblhide.appendChild(trdetalle)
+
+                    tddetalle1=document.createElement("td")
+                    tddetalle1.innerHTML=solicitud[4];
+                    
+                    tddetalle2=document.createElement("td")
+                    tddetalle2.innerHTML=solicitud[5]
+
+                    tddetalle3=document.createElement("td")
+                    tddetalle3.innerHTML=solicitud[6]
+
+                    tddetalle4=document.createElement("td")
+
+                    btnressol=document.createElement("button")
+                    btnressol.setAttribute("id", "btnressol-"+solicitud[0])
+                    btnressol.setAttribute("class", "btn btn-info btn-sm accordion-button")
+                    btnressol.setAttribute("data-bs-toggle", "collapse")
+                    btnressol.setAttribute("data-bs-target", "#collapseRespSol")
+                    btnressol.innerHTML="Responder..."
+                    btnressol.addEventListener("click",RespSolicitud)
+                    
+                    tddetalle4.appendChild(btnressol)                    
+                    for (var Celda of [tddetalle1,tddetalle2,tddetalle3,tddetalle4]){
+                        trdetalle.appendChild(Celda);
+                    }
+                    // agregar las respuestas
+                    for (var Celda of [colbtn,colIdsol,colTipo,colCausa,colEstado]){
+                        tr.appendChild(Celda);
+                    }
+                    
+                    lista.appendChild(tr);
+                    lista.appendChild(rowhide)
+                    
+                    /*TblResp=document.getElementById("idTblDetalle"+solicitud[0])
+                    while (TblResp.hasChildNodes()){
+                        TblResp.removeChild(TblResp.firstChild);
+                    }*/
+                    TblResp=document.getElementById("idTblDetalle"+solicitud[0])                     
+                    for(var dato of json['RepuestasSol'][solicitud[0]]){                                            
+                        var rowhideRes = document.createElement("tr")
+                        //rowhideRes.setAttribute("class","explode hide")
+
+                        
+                        var celSol0=document.createElement("td")
+                        celSol0.innerHTML=dato[0]
+
+                        var celSol1=document.createElement("td")
+                        celSol1.innerHTML=dato[1]
+
+                        var celSol2=document.createElement("td")
+                        celSol2.innerHTML=dato[2]
+                        
+                        for(var Celda of [celSol0,celSol1,celSol2]){
+                            rowhideRes.appendChild(Celda)
+                        }                        
+                        tbodytblhide.appendChild(rowhideRes)
+                        
+                    }
+
+                }
+               
+                //delete data
+            });
+
+    });
+
+    $('#btn-CloseModalFormMon').click(function (){
+        $('#Mdl-InfoAfect').modal('toggle');
+    })
+
+    $("#Tbl-HisCasos").on('click','#btn_DelCaso',function (){
+      var currentRow=$(this).closest("tr");
+      var col1=currentRow.find("td:eq(0)").text();
+      Swal.fire({
+        title: 'Confirmacion Eliminacion?',
+        text: "Esta seguro de eliminar la muestra"+col1+" ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, Borrarla!'
+        }).then((result) => {
+        if (result.isConfirmed) {            
+            options=HeaderFetch(csrf_token,{Gestion:'DelCasoMon',CasoBuscar:col1})
+            fetch("/AppDataBase",options).then(response => response.text())
+                .then(data => {
+                    Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                    )
+                    location.reload();                    
+                })
+
+        }})
+        })
+
+    $("#btnCerrModDel").click(function(){
+        location.href ="http://10.206.169.143:5000/HistorialMon";
+        })
+
+    $("#btncloModCopAse").click(function(){
+
+        $("#MdlCompCaso").modal('toggle')
+    })
+
+    $("#Tbl-HisCasos").on('click','#btn_ediCaso',function (){
+      $('#MdlCompCaso').modal('toggle');
+      $("#alertCompGua").hide();      
+      var currentRow=$(this).closest("tr");
+      var col1=currentRow.find("td:eq(0)").text();
+      var col6=currentRow.find("td:eq(6)").text();
+      // limpiar labels
+      for(var i of ["#lblEstCopAse","#lblFecComAse","#lblHorComAse",]){
+        $(i).html("")
+      }
+      const lista = document.getElementById("tbl_HisMonComAse");
+      lista.innerHTML=""
+      document.getElementById("lblCompAge").value=""
+      
+      options=HeaderFetch(csrf_token,{Gestion:'GetCasoMonAse',CasoBuscar:col1,"Segmento":"{{ current_user.perfil }}"})
+      fetch("/AppDataBase",options).then(response => response.text()).then(data => {
+            const json = JSON.parse(data);
+            document.getElementById("tdCuenta").innerHTML=json['CompAse'][0]
+            document.getElementById("tdOrden").innerHTML=json['CompAse'][1]
+
+
+            $("#lblNumMuesCopAse").html(col1)            
+            $("#Lblobsmuestra").html(json['CompAse'][2])
+
+            for(var dato of json['Notas']){
+                var tr = document.createElement("tr")
+                var tempcodetd =`
+                    <td>${dato[0]}</td>
+                    <td>${dato[1]}</td>
+                    <td>${dato[2]*100+"%"}</td>
+                    <td>${dato[3]}</td>
+                `
+                tr.innerHTML=tempcodetd
+                lista.appendChild(tr);
+            }
+
+            if(parseInt(col6,10)==100){                
+                $("#btnGuaCompAge").hide()
+                $("#lblCompAge").attr('disabled', true);
+            }else{
+                $("#btnGuaCompAge").show()
+                $("#lblCompAge").attr('disabled', false);
+            }            
+            if(json['CompAse'][3]==null){
+                $("#lblEstCopAse").html("Sin Compromiso agente")
+                $("#lblFecComAse").html("")
+                $("#lblHorComAse").html("")                                
+
+            }else{
+                $("#lblEstCopAse").html(json['CompAse'][3])
+                $("#lblFecComAse").html(json['CompAse'][5])
+                $("#lblHorComAse").html(json['CompAse'][6])
+                document.getElementById("lblCompAge").value=json['CompAse'][4]
+                //desabilitar edit
+                $("#lblCompAge").attr('disabled', true);                
+                }
+                //$("#Lblobsmuestra").html(json['CompAse'][0])
+          })
+    })
+
+    $('#btnGuaCompAge').click(function(){
+        if(document.getElementById("lblCompAge").value==""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Debe escribir su compromiso',
+                showConfirmButton: false,
+                timer: 1500
+                })
+            return
+        }
+        var col1=document.querySelector("#lblNumMuesCopAse").innerHTML        
+        options=HeaderFetch(csrf_token,{Gestion:'UpdComAse',CasoBuscar:col1,CompAsesor:document.getElementById("lblCompAge").value})
+        fetch("/AppDataBase",options).then(response => response.text()).then(data => {            
+            $("#alertCompGua").fadeIn(1000)
+        })
+
+        });
+
+    $("#btnGuaCopSup").click(function(){ 
+        if(document.getElementById("lblCompSup").value==""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Debe escribir su compromiso',
+                showConfirmButton: false,
+                timer: 1500
+                })
+            return
+        }   
+        const options = {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                "X-CSRFToken": csrf_token,
+            },
+            body: JSON.stringify(
+                {Gestion:'UpdCompSup',
+                    CasoBuscar:document.getElementById('lblNunMue').innerHTML,
+                    CompSup:document.getElementById("lblCompSup").value}
+                )
+            }
+        fetch("/AppDataBase",options).then(response => response.text()).then(data => {            
+            $("#alertCompSup").fadeIn(1000)
+            $("#lblCompSup").attr('disabled','disabled')
+        })
+        
+    })
+
+    $("#btn-GuaMonSp").click(function(){
+        var IdUsuario= "{{current_user.id}}"
+        options=HeaderFetch(csrf_token,{Gestion:'UpdCloseMuesta',CasoBuscar:document.getElementById("lbl_caso").textContent,Idusu:IdUsuario})    
+        fetch("/AppDataBase",options).then(response => response.text()).then(data => {
+            const json = JSON.parse(data);
+            if (json["Resultado"]==true){
+                Swal.fire({
+                icon: 'success',
+                title: 'Muestra cerrada con exito',
+                showConfirmButton: false,
+                timer: 1500
+                })
+                //location.reload()
+
+            
+            }else{Swal.fire({
+                icon: 'error',
+                title: 'Faltan compromisos de de alguna parte por firmar!',
+                showConfirmButton: false,
+                timer: 1500
+                })}
+        })
+    })
+
+    $("#btnsavsol").click(function(){
+        var idmon,idsol,tiposol,CausaSol,Descipcion;
+        idmon=document.getElementById('lbl_caso').innerHTML
+        idsol="{{current_user.id}}";
+        tiposol=document.getElementById("seltipsol").value
+        CausaSol=document.getElementById("selcausol").value
+        Descipcion=document.getElementById("texdessol").value
+        var csrf_token = "{{ csrf_token() }}";        
+        options=HeaderFetch(csrf_token,{Gestion:"NuevaSol",Caso:idmon,IdSol:idsol,TipSol:tiposol,CauSol:CausaSol,DesCas:Descipcion})    
+        fetch("/AppDataBase",options).then(response => response.text()).then(data => {
+            const json = JSON.parse(data);
+            //insertar los datos en la tabla de solicitudes
+            lista = document.getElementById("tblhissol");
+
+            var tr = document.createElement("tr");
+            tr.setAttribute("class", "sub-container");
+
+
+            var colbtn = document.createElement("td");
+
+            var btnEspanSol = document.createElement("button");
+            btnEspanSol.setAttribute("class", "btn btn-success exploder");
+            btnEspanSol.setAttribute("value", "Historial");
+            btnEspanSol.innerHTML="+"
+            btnEspanSol.addEventListener("click",ExpanderDetalles)
+            colbtn.appendChild(btnEspanSol);
+
+            var colIdsol = document.createElement("td");
+            colIdsol.innerHTML = json["IdCaso"];
+
+            var colTipo = document.createElement("td");
+            colTipo.innerHTML = tiposol;
+
+            var colCausa = document.createElement("td");
+            colCausa.innerHTML = CausaSol;
+
+
+            var colEstado = document.createElement("td");
+            colEstado.innerHTML = "Abierto";
+
+            //crear la columnas ocultas
+            var rowhide = document.createElement("tr")
+            rowhide.setAttribute("class","explode hide")
+
+            var colhide1 = document.createElement("td")
+            colhide1.setAttribute("colspan","5")
+            colhide1.style.background="#CCC"
+            colhide1.style.display="none"
+
+            rowhide.appendChild(colhide1)
+
+            var tabledetalles = document.createElement("table")
+            tabledetalles.setAttribute("class","table table-condensed")
+
+            colhide1.appendChild(tabledetalles)
+
+            var thead = document.createElement("thead")
+            tabledetalles.appendChild(thead)
+            tabhidtr= document.createElement("tr")
+            thead.appendChild(tabhidtr)
+            for(var i of ["Solicitante","Fecha y hora","Detalles"]){
+                x=document.createElement("th")
+                x.innerHTML=i
+                tabhidtr.appendChild(x)
+            }
+            tbodytblhide=document.createElement("tbody")
+            tabledetalles.appendChild(tbodytblhide)
+
+            trdetalle=document.createElement("tr")
+            tbodytblhide.appendChild(trdetalle)
+
+            tddetalle1=document.createElement("td")
+            tddetalle1.innerHTML="{{ current_user.nombre }}";
+
+
+            var today = new Date();
+            var now = today.toLocaleString();
+
+            tddetalle2=document.createElement("td")
+            tddetalle2.innerHTML=now
+
+            tddetalle3=document.createElement("td")
+            tddetalle3.innerHTML=Descipcion
+
+            tabledetalles.appendChild(tddetalle1)
+            tabledetalles.appendChild(tddetalle2)
+            tabledetalles.appendChild(tddetalle3)
+
+            lista.appendChild(tr);
+            tr.appendChild(colbtn);
+            tr.appendChild(colIdsol);
+            tr.appendChild(colTipo);
+            tr.appendChild(colCausa);
+            tr.appendChild(colEstado);
+            lista.appendChild(rowhide)
+            //reiniciar formulario
+            for(var i of ["seltipsol","selcausol","texdessol"]){
+                document.getElementById(i).value = ""
+            }
+        })
+    });
+
+    $("#btnressol-").click(function(){        
+        DIdSolicitud=document.getElementById('lbltexressol').getAttribute("value")       
+        DIdSolicitante="{{current_user.id}}";        
+        Respuesta=document.getElementById("texressol").value
+        var csrf_token = "{{ csrf_token() }}";        
+        options=HeaderFetch(csrf_token,{Gestion:"ResponderSol",Idsolicitud:DIdSolicitud,IdSolicitante:DIdSolicitante,ResSolicitud:Respuesta})   
+        fetch("/AppDataBase",options).then(response => response.text())
+            .then(data => {                    
+                lista=document.getElementById("idTblDetalle"+DIdSolicitud)
+                
+                trdetalle=document.createElement("tr")
+                tbodytblhide.appendChild(trdetalle)
+
+                tddetalle1=document.createElement("td")
+                tddetalle1.innerHTML="{{ current_user.nombre }}";
+
+
+                var today = new Date();
+                var now = today.toLocaleString();
+
+                tddetalle2=document.createElement("td")
+                tddetalle2.innerHTML=now
+
+                tddetalle3=document.createElement("td")
+                tddetalle3.innerHTML=Respuesta
+
+                trdetalle.appendChild(tddetalle1)
+                trdetalle.appendChild(tddetalle2)
+                trdetalle.appendChild(tddetalle3)
+                
+                lista.appendChild(trdetalle);
+
+            })
+        });
+
+    function Delcasosel(){
+        var fired_button = $(this).val();
+        var csrf_token = "{{ csrf_token() }}";        
+        options=HeaderFetch(csrf_token,{Gestion:"DelSoli",Caso:fired_button})  
+        fetch("/AppDataBase",options).then(response => response.text())
+            .then(data => {
+                Swal.fire({
+                icon: 'success',
+                title: 'Solicitud borrada con exito',
+                showConfirmButton: false,
+                timer: 1500
+                })
+            })
+    }
+
+    function RespSolicitud(){
+        var iddiv =this.id;
+        iddiv=iddiv.split('-')[1];        
+        document.getElementById('lbltexressol').setAttribute("value",iddiv)
+        document.getElementById('lbltexressol').innerHTML="Respuesta a solicitud\n"+iddiv
+    }
+
+</script>
+
+
+
+
+
+{% endblock %}

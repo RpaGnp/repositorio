@@ -1,0 +1,18 @@
+form, label {
+    color: black;
+  }
+  form input {
+    color: black !important;
+  }
+
+  form select input {
+    border: 1px solid black;
+  }
+
+  #tblNotas th {
+    border: 1px solid black !important;
+  }
+
+  form{
+    text-align: left !important;
+    }

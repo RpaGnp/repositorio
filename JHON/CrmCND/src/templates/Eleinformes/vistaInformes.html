@@ -1,0 +1,64 @@
+{% extends 'BaseDashboard.html' %} {% block title %}CRM CND{% endblock %}
+{% block Body %}
+
+<div class="card shadow-lg p-3 mb-5 bg-white rounded">
+    <div class="card-header">
+        <h5 class="card-title">Seleccione un informe a descargar</h5>        
+      </div>
+      <div class="card-body">
+        <blockquote class="blockquote mb-0">
+            <form action="/dwInformes" method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="form-group row">
+                    <div class="col-sm-2" style="text-align:left ;">
+                      <label for="seltipInfo" class="form-label">Tipo de informe</label>
+                    </div>
+                    <div class="col-sm-4">
+                      <select
+                        class="form-select form-select-sm"
+                        aria-label=".form-select-lg example"
+                        name="seltipInfo"
+                        id="seltipInfo"
+                      >
+                        <option selected>Seleccione...</option>                    
+                        <option value="General Calidad">General Calidad</option>                    
+                      </select>            
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2" style="text-align:left ;">
+                      <label for="seltipInfo" class="form-label">Fecha inicial</label>
+                    </div>
+                    <div class="col-sm-4" style="text-align:left ;">
+                      <input type="date" name="inpfecIniInf" id="inpfecIniInf">           
+                    </div>
+                
+                
+                    <div class="col-sm-2" style="text-align:left ;">
+                      <label for="seltipInfo" class="form-label">Fecha Final</label>
+                    </div>
+                    <div class="col-sm-1">
+                      <input type="date" name="inpfecFinInf" id="inpfecFinInf">           
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                    <!--<input directory="" class="form-control" type="file" name="DirDwfile" id="DirDwfile" multiple accept=".csv" download >-->
+                    <div class="col-4" style="text-align:left;">
+                    <input type="submit" class="btn btn-info" value="Guardar">
+                    </div>
+                </div>  
+            </form>
+          <footer class="blockquote-footer">Inicialmente se guardara el archivo en la carpeta de <cite title="UbicacionDw">Descargas</cite></footer>
+        </blockquote>
+      </div>
+
+
+</div>
+
+<script>   
+    
+</script>
+
+{% endblock %}

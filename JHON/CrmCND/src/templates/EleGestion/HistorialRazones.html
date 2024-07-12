@@ -1,0 +1,114 @@
+
+{% extends 'BaseDashboard.html' %}
+{% block title %}CRM DESPACHOS{% endblock %}
+
+{% block headers %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/styleEditorMuestras.css')}}">
+{% endblock %}
+
+
+{% block callscripts %}
+    <script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+{% endblock %}
+
+
+
+{% block Body %}
+<div class="row">
+    <div class="col-8">
+        <label for="CalendarRazon">Escoja una fecha a Consultar</label>
+        <input type="date" id="CalendarRazon">            
+    </div>
+    <div class="col-2">
+        <input type="button" value="Buscar" class="btn btn-info" id="btnconrazon">
+    </div>
+</div>
+
+<table class="table table-striped table-hover table-sm" id="tblHisRazones">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Id gestion</th>
+            <th>Orden</th>
+            <th>Estado</th>
+            <th>Resultado</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody id="tblbdyrazones">
+
+    </tbody>
+
+
+</table>
+{% include 'EleGestion/Modales.html' %}
+<script src="{{ url_for('static',filename='js/funcionesApp/FuncionesDespachos/Funchisrazon.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/classes/CallApis.js') }}"></script>
+<script>
+    
+    const Handletbl = new HandleTableRazon("tblbdyrazones")
+    const  CallAPis = new ConsultorApis("{{ csrf_token() }}")
+  
+    document.getElementById('CalendarRazon').value = new Date().toDateInputValue();
+
+
+
+    document.getElementById("btnconrazon").addEventListener("click",async ()=>{
+        var Fecha=document.getElementById("CalendarRazon").value
+        var DATA = await CallAPis.callpost("/AppDataBase",
+        {"Gestion":"Getdatarazones","SuperId":"{{ current_user.nombre }}","DiaGestion":Fecha})
+        Handletbl.filldata(DATA['DataRazones'])
+    })
+    
+
+    $("#tblHisRazones").on('click','#btnverraz',async function(){
+        var currentRow=$(this).closest("tr");
+        var col1=currentRow.find("td:eq(1)").text();
+        var DATA = await new HandleApis("{{ csrf_token() }}","/AppDataBase",
+        {"Gestion":"Getdatraz","idrazon":col1}).callPromiseGet()
+        var arrayrazon =DATA['DataRazon']
+        
+        var jsonRes = {
+            "otraz": arrayrazon[0],
+            "notraz": JSON.parse(arrayrazon[2]),
+            "fecregraz": arrayrazon[4],
+            "horregraz": arrayrazon[5],
+            "estgesraz": arrayrazon[6],
+            "fecgegraz": arrayrazon[7],
+            "horgesraz": arrayrazon[8],
+            "detgesraz": arrayrazon[9]
+        };
+
+        Object.keys(jsonRes).forEach(function(key) {
+            document.getElementById(key).innerText = jsonRes[key];
+        });
+
+        
+        $("#mdldetrazon").modal('toggle')
+    }
+    )
+
+    // reintentar una razon
+    $("#tblHisRazones").on('click','#btnresraz',async function(){
+        var currentRow=$(this).closest("tr");
+        var idevento=currentRow.find("td:eq(1)").text();
+        if(idevento!=""){
+            var DataForm = await CallAPis.callpost('/AppDataBase',{"Gestion":"Updreirazase","IdRazon":idevento })
+        }else{
+            alert("Favor selecione un evento!...")
+        }
+    })
+
+    // dw error
+    $("#tblHisRazones").on('click','#btndwnraz',async function(){
+        var currentRow=$(this).closest("tr");
+        var idevento=currentRow.find("td:eq(1)").text();
+        if(idevento!=""){
+            await CallAPis.callFile("/ConsultorDatos",{"Option":"getimgrazon","Evento":idevento});
+        }else{
+            alert("Favor selecione un evento!...")
+        }
+    })
+
+</script>
+{% endblock %}

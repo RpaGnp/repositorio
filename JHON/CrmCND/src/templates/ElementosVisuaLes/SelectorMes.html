@@ -1,0 +1,21 @@
+<div class="form-group row align-items-center">
+    <label for="selectmes" class="col-sm-2 col-form-label text-center">Mes</label>
+    <div class="col-sm-10">
+      <select class="custom-select" name="selectmes" id="selectmes" title="Elige una opción">
+      <script>
+              const selectormes=document.getElementById('selectmes')
+              var contador=1
+              for(let mes of ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']){
+                                      let opt=document.createElement('option')
+                                      opt.value=contador
+                                      opt.innerHTML=mes
+                                      selectormes.appendChild(opt)
+                                      contador+=1
+                                  }
+            const nmes = new Date().getMonth() + 1;
+            selectormes.value=nmes
+      </script>
+    </select>
+    </div>
+  </div>

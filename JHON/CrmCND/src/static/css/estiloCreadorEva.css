@@ -1,0 +1,21 @@
+[data-tab-content] {
+    display: none;
+    }
+
+    .active[data-tab-content] {
+    display: block;
+    }
+
+    
+    .tab {
+    cursor: pointer;
+    padding: 2px;
+    }
+
+    .tab.active {
+    background-color: #CCC;
+    }
+
+    .tab:hover {
+    background-color: #AAA;
+    }

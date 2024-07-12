@@ -1,0 +1,38 @@
+
+<!--<h1>Bienvenido,{{ current_user.fullname}}</h1>,current_user.perfil, current_user.segmento,current_user.estado-->
+<!--<a class="btn btn-secondary" href="{{ url_for('logout')}}">Salir</a>-->
+<!-- Bootstrap core JavaScript-->
+
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+
+<!-- Custom scripts for all pages-->
+<script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+
+<!-- Page level plugins -->
+<script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+
+
+
+<!-- Page level custom scripts -->
+<script src="{{ url_for('static', filename='js/demo/chart-area-demo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/demo/chart-pie-demo.js') }}"></script>
+
+
+<script type=text/javascript>
+    $(function () {
+        $('a#aSideDashboard').on('click', function (e) {
+            e.preventDefault()
+            $.getJSON('/background_process_test',
+                function (data) {
+                    //do nothing
+                });
+            return false;
+        });
+    });
+</script>
+

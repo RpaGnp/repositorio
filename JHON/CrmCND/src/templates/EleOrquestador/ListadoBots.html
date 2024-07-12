@@ -1,0 +1,417 @@
+{% extends 'BaseDashboard.html' %} {% block title %}CRM CND{% endblock %} {%
+block Body %}
+
+<style>
+  .table-fixed {
+    width: 100%;
+    background-color: #f3f3f3;
+  }
+
+  .selected {
+    background-color: #2c4fb5;
+    color: white;
+  }
+</style>
+
+<div class="Container_containerLarge__1FGK-">
+  <div class="card shadow" style="height: 400px; overflow: scroll">
+    <table
+      id="Tbl-infobots"
+      class="table table-fixed"
+      style="color: black; text-align: left; font-size: 15px"
+    >
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Nombre Bot</th>
+          <th scope="col">Trabajo</th>
+          <th scope="col">Ciudad</th>
+          <th scope="col">linea</th>
+          <th scope="col">Usuario</th>
+          <th scope="col">Gestion</th>
+          <th scope="col">Novedad</th>
+          <th scope="col">Opciones</th>
+        </tr>
+      </thead>
+      <tbody id="tbl_listBots">
+        {% for i in DicBotsActivos.values() %}
+        <tr>
+          <td>{{ i.nombreBot }}</td>
+          <td>{{ i.TipGestion }}</td>
+          <td>{{ i.ciuGestion }}</td>
+          <td>{{ i.linGestion }}</td>
+          <td>{{ i.UsuGes }}</td>
+          <td>{{ i.Detges }}</td>
+          <td>{{ i.estGes }}</td>
+          <td style="width: 10%">
+            <a
+              type="Button"
+              id="btn_asiglabor"
+              class="btn btn-primary btn_asiglabor"
+              style="height: 75%"
+            >
+              Gestionar
+              <!--<img width="20px" height="5%"src="https://cdn-icons-png.flaticon.com/512/1160/1160515.png"></img>-->
+            </a>
+          </td>
+        </tr>
+        {% endfor%}
+      </tbody>
+    </table>
+  </div>
+
+  <div id="btn-gestionBots" class="row mt-4 shadow">
+    <h5 id="CarProTit" class="card-title" style="color: black">Estado Bot</h5>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+              >
+                Ordenes gestionadas
+              </div>
+              <div
+                id="ProGes"
+                class="h5 mb-0 font-weight-bold text-gray-800"
+              ></div>
+            </div>
+            <div class="col-auto">
+              <img src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/000000/external-check-multimedia-kiranshastry-lineal-color-kiranshastry.png"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings (Annual) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-danger shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-danger text-uppercase mb-1"
+              >
+                Ordenes pendientes
+              </div>
+              <div
+                id="ProPen"
+                class="h5 mb-0 font-weight-bold text-gray-800"
+              ></div>
+            </div>
+            <div class="col-auto">
+              <img src="https://img.icons8.com/flat-round/64/000000/question-mark.png" height="50px"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+              >
+                Total cargado
+              </div>
+              <div
+                id="ProTot"
+                class="h5 mb-0 font-weight-bold text-gray-800"
+              ></div>
+            </div>
+            <div class="col-auto">
+              <img src="https://img.icons8.com/fluency/48/000000/ingredients-list.png"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-info text-uppercase mb-1"
+              >
+                Porcentaje cargado
+              </div>
+              <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                  <div
+                    id="ProTot"
+                    class="h5 mb-0 mr-3 font-weight-bold text-gray-800"
+                  ></div>
+                </div>
+                <div class="col">
+                  <div class="progress progress-sm mr-2">
+                    <div
+                      id="ProBarPorcGes"
+                      class="progress-bar bg-info"
+                      role="progressbar"
+                      style="width: 1%"
+                      aria-valuenow="50"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <img src="https://img.icons8.com/office/16/000000/percentage.png"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--mODAL DE GESTION-->
+  <div
+    class="modal fade"
+    id="ModGestionBot"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+    >
+
+
+  >
+    <div class="modal-dialog">
+      <div class="modal-content" style="width:150%">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel" name="lblmdlgesBot"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+
+              <button type="button" class="btn btn-success"
+                data-bs-toggle="collapse" data-bs-target="#collapseAsignar"
+                aria-expanded="false" aria-controls="collapseAsignar"
+               name="button">Asignar</button>
+
+              <button type="button"  class="btn btn-info"
+              data-bs-toggle="collapse" data-bs-target="#collapsePausar"
+              aria-expanded="false" aria-controls="collapsePausar"
+
+               name="button">Pausar</button>
+              <button type="button" class="btn btn-danger"
+                data-bs-toggle="collapse" data-bs-target="#collapseElimminar"
+                aria-expanded="false" aria-controls="collapseElimminar"
+               name="button">Eliminar</button>
+
+            </div>
+          </div>
+          <div class="collapse" id="collapseElimminar">
+            <div class="card card-body">
+              Se envio comando de <strong>Eliminacion</strong> al bot seleccionado!
+            </div>
+          </div>
+
+          <div class="collapse" id="collapsePausar">
+            <div class="card card-body">
+              Se envio comando de <strong id="EstadoBot"></strong> al bot seleccionado!
+            </div>
+          </div>
+
+          <div class="collapse" id="collapseAsignar">
+            <div class="card card-body">
+              <div class="form-group row">
+                <div class="col-sm-2">
+                  <label for="inputFechMon" class="form-label">Usuario</label>
+                </div>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control"
+                    id="inpUsuWf"
+                    name="inpUsuWf"
+                    required
+                  />
+                  </div>
+                  <div class="col-sm-2">
+                    <label for="inputFechMon" class="form-label">Clave</label>
+                  </div>
+                  <div class="col-sm-4">
+                    <input type="password" class="form-control"
+                      id="inpClaWf"
+                      name="inpClaWf"
+                      required
+                    />
+                  </div>
+
+              </div>
+
+
+              <div class="form-group row">
+                <div class="col-sm-2">
+                  <label for="SelBacOrq" class="form-label"
+                    >Linea</label
+                  >
+                </div>
+                <div class="col-sm-4">
+                  <select
+                    class="form-select form-select-sm"
+                    aria-label=".form-select-lg example"
+                    name="SelBacOrq"
+                    id="SelBacOrq"
+                  >
+                    <option selected>Seleccione...</option>
+                    {% for i in DicDatOrq['Backoffice'] %}
+                    <option value="{{i}}">{{i}}</option>
+                    {% endfor%}
+                  </select>
+                </div>
+
+                <div class="col-sm-2">
+                  <label for="SelLabOrq" class="form-label"
+                    >Labor</label
+                  >
+                </div>
+                <div class="col-sm-4">
+                  <select
+                    class="form-select form-select-sm"
+                    aria-label=".form-select-lg example"
+                    name="SelLabOrq"
+                    id="SelLabOrq"
+                  >
+                    <option selected>Seleccione...</option>
+                    {% for i in DicDatOrq['Labor'] %}
+                    <option value="{{i}}">{{i}}</option>
+                    {% endfor%}
+                  </select>
+                </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-2">
+                    <label for="SelCiuOrq" class="form-label"
+                      >Ciudad</label
+                    >
+                  </div>
+                  <div class="col-sm-4">
+                    <select
+                      class="form-select form-select-sm"
+                      aria-label=".form-select-lg example"
+                      name="SelCiuOrq"
+                      id="SelCiuOrq"
+                    >
+                      <option selected>Seleccione...</option>
+                      {% for i in DicDatOrq['Ciudad'] %}
+                      <option value="{{i}}">{{i}}</option>
+                      {% endfor%}
+                    </select>
+
+                  </div>
+                </div>
+
+
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    var server = "http://10.206.169.143:5000";
+    var csrf_token = "{{ csrf_token() }}";
+    //add function highlight of each row selected
+    function highlight(e) {
+      if (selected[0]) selected[0].className = "";
+      e.target.parentNode.className = "selected";
+    }
+
+    var table = document.getElementById("tbl_listBots"),
+      selected = table.getElementsByClassName("selected");
+    table.onclick = highlight;
+
+    //funcion para traer informacion del bot seleccionado
+    $("#tbl_listBots").on("click", "tr", function () {
+      var currentRow = $(this).closest("tr");
+      var col1 = currentRow.find("td:eq(0)").text(); // get current row 1st NOMBRE value
+      var col2 = currentRow.find("td:eq(1)").text(); // get current row 1st TRABAJO value
+
+      $("#CarProTit").text(col1);
+      var Trabajo = col2;
+      if (Trabajo == "--") {
+        for (var i of ["ProGes", "ProPen", "ProTot", "Progen"]) {
+          document.getElementById(i).innerHTML = 0;
+        }
+        document.querySelector("#ProBarPorcGes").removeAttribute("style");
+        return;
+      } else {
+        const options = {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrf_token,
+          },
+          body: JSON.stringify({ NameBot: col1, LaborBot: col2 }),
+        };
+        fetch("/GetProgressBot", options)
+          .then((response) => response.text())
+          .then((data) => {
+            const json = JSON.parse(data);
+            document.getElementById("ProTot").innerHTML = json["total"];
+            document.getElementById("ProPen").innerHTML = json["pendiente"];
+            document.getElementById("ProGes").innerHTML = json["Gestionado"];
+            document
+              .querySelector("#ProBarPorcGes")
+              .setAttribute("style", "width: " + json["porcentava"] + "%");
+          });
+      }
+    });
+
+    //funcion BOTON GESTION
+    var btnSelection = document.getElementsByClassName("btn_asiglabor");
+    for (let i = 0; i < btnSelection.length; i++) {
+      btnSelection[i].addEventListener("click", function () {
+        $("#tbl_listBots").on("click", "#btn_asiglabor", function () {
+          var currentRow = $(this).closest("tr");
+          var col1 = currentRow.find("td:eq(0)").text();
+          var colpause = currentRow.find("td:eq(6)").text();
+          //ocultar los acordeones
+          for(var i of ["collapseElimminar","collapsePausar","collapseAsignar"]){
+              document.getElementById(i).setAttribute("class","collapse hide")
+          }
+          var EstadoBot=""
+          if(colpause=="Pausar"){
+            EstadoBot=="Reanudar"
+          }else{
+            EstadoBot="Pausar"
+          }
+          document.getElementById('EstadoBot').innerHTML=EstadoBot
+          $("#ModGestionBot").modal('toggle');
+          document.getElementById('staticBackdropLabel').textContent ="Gestionar "+col1
+
+
+        });
+      });
+    }
+  </script>
+
+  {% endblock %}
+</div>

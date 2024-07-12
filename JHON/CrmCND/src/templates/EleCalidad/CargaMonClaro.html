@@ -1,0 +1,54 @@
+{% extends 'BaseDashboard.html' %}
+
+{% block title %}CRM CND{% endblock %}
+
+{% block Body %}
+
+<div class="row">
+    <form action="lectorxml" method="post" enctype="multipart/form-data"> 
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="idcalidad" value="{{ current_user.id }}"/>
+        <div class="row">
+        <div class="col-3">
+            <label for="formFile" class="form-label">Importar Monitoreo Claro</label>
+        </div>
+        <div class="col-7">
+            <input class="form-control" type="file" value="" name="upload-file" id="formFile" accept=".xlsx">
+        </div>
+        <div class="col-2">
+            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i>
+                subir</button>
+        </div>
+        </div>
+    </form>
+</div>
+
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+              {% if category == 'message' %}
+                {% if message=="Cargue un archivo en el formato indicado!" or message=="Nombre del archivo cargado no valido, favor cambielo!"%}                    
+                    <div class="alert alert-danger" role="alert">
+                {% else %}
+                    <script>
+                        Swal.fire(
+                            'CARGA Exitosa!',
+                            'Se ha cargado el archivo en base de datos!',
+                            'success'
+                        )
+                    </script>
+                    <div class="alert alert-success" role="alert">
+                {% endif%}
+              {% else %}
+                <div class="alert alert-{{ category }}" role="alert">
+              {% endif %}
+                {{ message }}
+              </div>
+          {% endfor %}
+        {% endif %}
+    {% endwith %}
+  </div>
+
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends './baseDashboard.html'%}
+
+{% block title %}Crm Formacion{% endblock %}
+
+
+{% block Body %}
+
+<style>
+  .table{
+    border-color: black;
+    color: black;
+    text-align: left;
+  }
+
+
+</style>
+
+
+<h2>Modulo consulta preturnos</h2>
+
+<table class="table">
+  <tr>
+    <td>
+      {% include 'ElementosVisuales/Selectormes.html' %}
+    </td>
+    <td>
+      {% include 'ElementosVisuales/Selectoryear.html' %}
+    </td>
+  </tr>
+</table>
+
+  <table class="table" id="tblhpreturnos">
+    <tr>
+      <th style="display:none;"> Idfile </th>
+      <th> Nombre </th>
+      <th> Fecha </th>
+      <th> Tema </th>
+      <th> Segmento </th>
+      <th> Evaluacion </th>
+      <th> Nota </th>
+      <th>  Pdf </th>
+    </tr>
+    <tbody id="tblpreturnos">
+
+       
+    </tbody>
+    <tfoot>
+      <td><strong>Promedio general del mes</strong></td>
+      <td id="NotPromMes" style="text-align: right;">0</td>
+    </tfoot>
+  </table>
+  <div class="list" id="list"></div>
+  <div class="pagenumbers pagination justify-content-center" id="pagination"></div>
+
+
+
+<script src="{{ url_for('static', filename='/js/funcionesApp/ArbolFunciones.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/funcionesApp/funcionesdashboard/pagination.js') }}"></script>
+<script>    
+    function Actualizar( ){
+      const list_element = document.getElementById('tblpreturnos');
+      // const pagination_element = document.getElementById('pagination');
+      var messelected=document.getElementById('selectmes').value
+      var yearselected=document.getElementById('selectyear').value
+	  options=HeaderFetch("{{ csrf_token() }}",{Option:'GetpretmesAsesor',mesdata:messelected,yeardata:yearselected})
+      //options=HeaderFetch("{{ csrf_token() }}",{Option:"GetPreturnosActivos"})
+      fetch("/ConsultorDatos",options).then(response => response.text()).then(async data => {
+        list_element.innerHTML=""
+        const  list_items  = JSON.parse(data);
+
+        list_items.forEach(Dato => {
+          var row = document.createElement('tr')
+          var tempcode=`<td hidden>${Dato[0]}</td>
+                         <td>${Dato[1]}</td>
+                         <td>${Dato[2]}</td>
+                         <td>${Dato[3]}</td>
+                         <td>${Dato[4]}</td>
+                         <td><a href= "/Evaluaciones/${Dato[0]}/{{ current_user.id }}">Link</a></td>
+                        <td>${Dato[5]}</td>
+                        <td>
+                          <button class="btn btn-outline-primary" id="btndwpret">Ver</button>
+                        </td>`
+          row.innerHTML = tempcode
+          list_element.appendChild(row)
+          $("#NotPromMes").html(Dato[6]+"%")
+          });
+
+
+     })
+    }
+
+    
+
+    $("#selectmes").change(function() {
+      Actualizar()
+    });
+
+    $("#selectyear").change(function() {
+      Actualizar()
+    });
+    
+    $( document ).ready(function() {
+      Actualizar()
+    })
+
+    $("#tblhpreturnos").on('click','#btndwpret',function(){
+      var currentRow=$(this).closest("tr");
+      var colid=currentRow.find("td:eq(0)").text();
+      options=HeaderFetch("{{ csrf_token() }}",{Option:'DwPretFile',PretId:colid})
+            fetch("/ConsultorDatos",options)
+            .then(response => response.blob())
+            .then(blob => {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                window.open(url, '_blank');
+                /*a.href = url;
+                a.download = "filename.pdf";
+                document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+                a.click();
+                a.remove();*/  //afterwards we remove the element again
+            });})
+
+</script>
+{% endblock %}

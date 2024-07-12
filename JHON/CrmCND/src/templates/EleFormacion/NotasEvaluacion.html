@@ -1,0 +1,125 @@
+{% extends './baseDashboard.html'%}
+
+{% block title %}Crm Formacion{% endblock %}
+
+{% block headers %}
+    <link
+    href="{{ url_for('static', filename='css/Formacion/EstNotFormacion.css') }}"
+    rel="stylesheet"
+    />
+{% endblock %}
+
+{% block callscripts %}
+    <script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+
+{% endblock %}
+
+
+{% block Body %}
+    <div class="main">
+        <h3>Notas evaluaciones</h3>
+        <div class="row">            
+            <div class="col-1">
+                <label for="selectmes">Mes</label>
+            </div>
+            <div class="col-2">
+                <select class="form-select" name="selectmes" id="selectmes">
+                    <option value="">..::Selecione::..</option>
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>                
+        
+            <div class="col-1">
+                <label for="selectpreturno">Preturno</label>
+            </div>            
+            <div class="col-3">
+                <select class="form-select" name="selectpreturno" id="selectpreturno">
+                    <option value="">..::Selecione::..</option>
+                </select>
+            </div>   
+            <div class="col">                
+                <input id="btngetdateva" type="button" class="btn btn-info" value="Consultar">
+                {% if current_user.perfil in  ['FORMADOR','LIDER FORMACION','DESARROLLADOR'] %}
+                    <button type="button" id="btndwrespre" class="btn btn-success" value=""><i class="fas fa-download"></i></button>
+                    <input id="btnreseteva" type="button" class="btn btn-dark" value="Res Asesor">
+                {% endif %}
+            </div>     
+        </div>
+
+        <div class="row mt-2 table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id Evaluacion</th>
+                        <th>Nombre</th>
+                        <th>Ciudad</th>
+                        <th>Asistencia</th>
+                        <th>Novedad</th>
+                        <th>Fecha Evaluacion</th>
+                        <th>Nota</th>
+                    </tr>
+                </thead>
+                <tbody id="tblnotaevapre">
+
+
+
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+<script src="{{ url_for('static',filename='js/classes/CallApis.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+<script src="{{ url_for('static',filename='js/funcionesApp/funcionesFormacion/FuncionesEaveluacion.js') }}"></script>   
+<script>
+    const HandleMes = new HandleSelePre("{{ current_user.ciudad }}","{{ current_user.id }}","{{ current_user.cargo }}")
+    HandleMes.addFuncMes()
+
+    const HandleTable = new HandleTblAse("{{ csrf_token() }}","{{ current_user.id }}","{{ current_user.cargo }}")
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        const nmes = new Date().getMonth() + 1;
+        const JsonMes={1:'Enero', 2:'Febrero', 3:'Marzo', 4:'Abril', 5:'Mayo', 6:'Junio',7:'Julio', 8:'Agosto', 9:'Septiembre', 10:'Octubre', 11:'Noviembre', 12:'Diciembre'}
+        
+        const selectormes=document.getElementById('selectmes')  
+        selectormes.value=nmes
+        await HandleMes.addclickMes()
+    })
+
+    document.getElementById('btngetdateva').addEventListener("click",async function() {        
+        await HandleTable.getdatase()
+        
+
+    })
+
+    if(document.getElementById('btnreseteva') !==null){
+        document.getElementById('btnreseteva').addEventListener("click",async function() {
+            await HandleTable.DwResPreAse()
+            showAlertsInfo2({'Mensaje':'Respuestas descargadas con exito!','icon':'success'})
+        })
+    }
+
+    if(document.getElementById('btnreseteva') !==null){
+        document.getElementById('btndwrespre').addEventListener("click",async () =>{
+            var IdPreturno = document.getElementById('selectpreturno').value
+            await HandleTable.DwResPre(IdPreturno)
+        })
+    }
+
+
+
+</script>
+{% endblock %}

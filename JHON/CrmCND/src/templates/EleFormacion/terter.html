@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Contructor</title>   
+    <style>
+        [data-tab-content] {
+        display: none;
+        }
+
+        .active[data-tab-content] {
+        display: block;
+        }
+
+        
+        .tab {
+        cursor: pointer;
+        padding: 2px;
+        }
+
+        .tab.active {
+        background-color: #CCC;
+        }
+
+        .tab:hover {
+        background-color: #AAA;
+        }
+    </style>
+  </head>
+  <body>
+    <div>
+        <div class="card text-center" style="width: 36rem;">
+            <div class="card-header">
+                <ul class="tabs nav nav-tabs card-header-tabs">
+                    <li data-tab-target="#Preguntas" class="active tab nav-item">
+                        <a class="nav-link active" aria-current="true" href="#">Pregunta</a>
+                    </li>
+                    <li data-tab-target="#Repuestas" class="tab nav-item">
+                        <a class="nav-link active" aria-current="true" href="#">Respuestas</a>
+                    </li>
+                    <li data-tab-target="#Multimedia" class="tab nav-item">
+                        <a class="nav-link active" aria-current="true" href="#">Multimedia</a>
+                    </li>                    
+                  </ul>
+            </div>
+                <div class="card-body" class="tab-content" style="text-align: start;">
+                    <form>
+                    <div id="Preguntas" data-tab-content class="active">                    
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" required></textarea>
+                            <label for="floatingTextarea">Pregunta</label>
+                        </div>
+                    </div>
+                    <div id="Repuestas" data-tab-content>
+                        <label for="SelTipPre"  class="form-label">Tipo de Pregunta</label>
+                        <select name="SelTipPre" id="SelTipPre" class="form-select">
+                            <option value="0b">Seleccione...</option>
+                            <option value="1b">Falso/Verdadero</option>
+                            <option value="2b">Multiple</option>
+                            <option value="3b">Ordenar</option>
+                        </select>
+                        <div id="divCreaPre">
+
+
+                        </div>
+                    </div>
+                    <div id="Multimedia" data-tab-content>
+                    <h4>Seleccione un archivo</h4>
+                    <input class="form-control" type="file" id="formFile">
+                    </div>
+                    <hr>    
+                    <input type="button" value="Guardar" id="btnCrePreg" class="btn btn-success">
+                </form>
+            </div>
+
+          </div>
+    </div>    
+
+    
+    
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    
+    <script>
+        const tabs = document.querySelectorAll('[data-tab-target]')
+        const tabContents = document.querySelectorAll('[data-tab-content]')
+
+        tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = document.querySelector(tab.dataset.tabTarget)
+            tabContents.forEach(tabContent => {
+            tabContent.classList.remove('active')
+            })
+            tabs.forEach(tab => {
+            tab.classList.remove('active')
+            })
+            tab.classList.add('active')
+            target.classList.add('active')
+        })
+        })
+
+
+        document.getElementById('SelTipPre').addEventListener("change",function(){
+            var OptGet=document.getElementById("SelTipPre").value            
+            var boarRes=document.getElementById('divCreaPre')
+            boarRes.innerHTML=""
+            var newDivRes = document.createElement("div");
+            OptGet.InnerHTML=""            
+            if(OptGet=='1b'){
+                var code=`
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Opción</th>
+                        <th>Correcta</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Verdadero</td>
+                        <td><Input id="chkTrue" class="form-check-input" type="checkbox"></Input></td>
+                    </tr>
+                    <tr>
+                        <td>Falso</td>
+                        <td><Input id="chkFalse" class="form-check-input" type="checkbox"></Input></td>
+                    </tr>
+                    </tbody>
+                </table>
+            `
+            
+            }else if(OptGet=='2b'){
+                var code=`
+                <table class="table">
+                <thead>
+                <tr>
+                    <th>Opción</th>
+                    <th>Correcta</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResA"></textarea>
+                            <label for="textResA">A</label>
+                        </div>
+                    </td>
+                    <td>
+                        <Input class="form-check-input" type="checkbox" id="checkResA"></Input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResB"></textarea>
+                            <label for="textResB">B</label>
+                        </div>
+                    </td>
+                    <td>
+                        <Input class="form-check-input" type="checkbox" id="checkResB"></Input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResC"></textarea>
+                            <label for="textResC">C</label>
+                        </div>
+                    </td>
+                    <td>
+                        <Input class="form-check-input" type="checkbox" id="checkResC"></Input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResD"></textarea>
+                            <label for="textResD">D</label>
+                        </div>
+                    </td>
+                    <td><Input class="form-check-input" id="checkResD" type="checkbox"></Input></td>
+                </tr>
+                </tbody>
+            </table>
+                
+            `
+            }
+            else if ('3b'){
+                var code=`
+                <table class="table">
+                <thead>
+                <tr>
+                    <th>Opción</th>
+                    <th>Correcta</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResOrd1"></textarea>
+                            <label for="textResOrd1">A</label>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="" id="selordpreg1" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="01">1</option>
+                            <option value="02">2</option>
+                            <option value="03">3</option>
+                            <option value="04">4</option>
+                            <option value="05">5</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResOrd2"></textarea>
+                            <label for="textResOrd2">B</label>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="" id="selordpreg2" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="01">1</option>
+                            <option value="02">2</option>
+                            <option value="03">3</option>
+                            <option value="04">4</option>
+                            <option value="05">5</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResOrd3"></textarea>
+                            <label for="textResOrd3">C</label>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="" id="selordpreg3" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="01">1</option>
+                            <option value="02">2</option>
+                            <option value="03">3</option>
+                            <option value="04">4</option>
+                            <option value="05">5</option>
+                        </select>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResOrd4"></textarea>
+                            <label for="textResOrd4">D</label>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="" id="selordpreg4" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="01">1</option>
+                            <option value="02">2</option>
+                            <option value="03">3</option>
+                            <option value="04">4</option>
+                            <option value="05">5</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Escriba su opcion de respuesta" id="textResOrd5"></textarea>
+                            <label for="textResOrd5">E</label>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="" id="selordpreg5" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="01">1</option>
+                            <option value="02">2</option>
+                            <option value="03">3</option>
+                            <option value="04">4</option>
+                            <option value="05">5</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+                
+            `
+            }else{
+                
+
+            }
+
+            newDivRes.innerHTML=code
+            boarRes.appendChild(newDivRes)
+        })
+
+
+        document.getElementById('btnCrePreg').addEventListener("click", function(){
+            // recoge los inputs y ccrea un string tipo dicionario 
+            Arrayinputs=["floatingTextarea","SelTipPre"]
+            jsonPregunta={}
+            
+            jsonPregunta.Pregunta = document.getElementById('floatingTextarea').value;
+            jsonPregunta.TipoPregunta = document.getElementById('SelTipPre').value;                        
+            var opcionrespuesta=  jsonPregunta['TipoPregunta']
+            for(var x of Arrayinputs){
+                var respuesta=document.getElementById(x).value                
+                
+                if(opcionrespuesta==""){
+                    alert("Debe diligenciar todos los campos!")
+                    return
+                }
+                jsonVF={}
+                if (opcionrespuesta=="1b"){
+                    jsonVF.Verdadero=document.getElementById('chkTrue').checked
+                    jsonVF.Falso=document.getElementById('chkFalse').checked                    
+                    jsonPregunta.ResPre=jsonVF
+                }else if(opcionrespuesta=="2b"){
+                    // recoger las preguntas y respuestas                    
+                    arrayInputs=["textResA","textResB","textResC","textResD"]
+                    arrayChecks=["checkResA","checkResB","checkResC","checkResD"]
+                    for(var i=0;i<arrayInputs.length;i++){                        
+                        pregunta=document.getElementById(arrayInputs[i]).value;    
+                        respuesta=document.getElementById(arrayChecks[i]).checked;                        
+                        jsonVF[pregunta] = respuesta;
+                    }                    
+                }else{
+                    for(var i=1;i<6;i++){
+                        jsonVF[document.getElementById("textResOrdA"+i).value]=document.getElementById("selordpreg"+i)
+                    }                    
+                }
+            }
+            console.log(jsonPregunta)
+
+        })
+    </script>
+  </body>
+</html>

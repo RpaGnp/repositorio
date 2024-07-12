@@ -1,0 +1,16 @@
+
+
+
+.table-container {
+    max-height: 600px; /* Altura máxima del tbody con desplazamiento */
+    overflow-y: auto; /* Activar el desplazamiento vertical */
+    position: relative; /* Necesario para posicionar el thead */
+}
+
+/* Estilo para el thead fijo */
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 1; /* Asegura que el encabezado esté sobre el tbody */
+}

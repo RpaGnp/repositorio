@@ -1,0 +1,342 @@
+
+<h1 class="h3 mb-3 text-gray-800">Formulario calidad</h1>
+
+<table class="table table-bordered table-ligth" id="tblNotas">
+  <thead>
+    <tr>
+      <th scope="Col">Nota Muestra</th>
+      <th colspan="1" scope="Col">EC</th>
+      <th colspan="1" scope="Col">ENC</th>
+      <th colspan="1" scope="Col">TE</th>
+    </tr>
+    <tr>
+      <th scope="col" id="lbl_NotMonTotal" style="background-color:#4ed2ad ;color: black;" >100</th>
+      <th scope="col" id="lbl_NotMonec">0</th>
+      <th scope="col" id="lbl_NotMonenc">0</th>
+      <th scope="col" id="lbl_NotMonte">0</th>
+    </tr>
+  </thead>
+</table>
+
+<form class="row g-3 mt-3" autocomplete="off">
+  <!--method="post" action="/MonReg"-->
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <!-- Datos de monitor--> 
+        <h2>Datos del auditor</h2>
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SelAuditor" class="form-label">Auditor</label>
+          </div>
+          <!--<h2>{{current_user.nombre}}</h2>-->
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SelAuditor">
+            <option>Seleccione...</option>
+              {% for i in Perfiles%}                
+                <option>{{i[0]}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="inpSede" class="form-label">CND</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="inpSede"
+              id="inpSede"              
+            >
+              <option selected>Seleccione...</option>              
+              <option value="CENTRO">CENTRO</option>
+              <option value="OCCIDENTE">OCCIDENTE</option>
+            </select>            
+          </div>
+        </div>
+        <h5>{{ DicDatForm['NombreAud'] }}</h5>
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SelAreaMon" class="form-label"
+              >Area que monitorea</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SelAreaMon"
+              id="SelAreaMon"              
+            >
+            <option selected>Seleccione...</option>              
+            <option value="FORMADOR" selected>FORMADOR</option>
+            <option value="SUPERVISOR" selected>SUPERVISOR</option>
+            <option value="LIDER FORMACION" selected>LIDER FORMACION</option>
+            <option value="CALIDAD" selected>CALIDAD</option>
+            </select>
+          </div>
+        </div>
+        
+
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SeltipGes" class="form-label">Gestion</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SeltipGes"
+              id="SeltipGes"
+            >
+              <option selected>Seleccione...</option>
+              {% for i in DicDatForm['PORCESO'] %}
+              <option value="{{i}}">{{i}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SeltipMon1" class="form-label">Tipo de monitoreo</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SeltipMon1"
+              id="SeltipMon1"
+            >
+              <option selected>Seleccione...</option>
+              {% for i in DicDatForm['TIPOAUD'] %}
+              <option value="{{i}}">{{i}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="inputFechMon" class="form-label">Fecha Monitoreo</label>
+          </div>
+          <div class="col-sm-6">
+            <input
+              type="date"
+              class="form-control"
+              id="inputFechMon"
+              name="inputFechMon"
+              required
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <h2>Datos agente</h2>
+        <div class="form-group row">
+          <div class="col-sm-4">
+            <label for="inputCedAse" class="form-label">Cedula asesor</label>
+          </div>
+          <div class="col-sm-8">
+            <input
+              type="text"
+              class="form-control"
+              id="inputCedAse"
+              name="inputCedAse"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputNomAse" class="form-label">Nombre asesor</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputNomAse" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputProAse" class="form-label">Proceso asesor</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputProAse" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputCooAse" class="form-label">Coordinador</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputCooAse" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputForAse" class="form-label">Login</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputForAse" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputfecIngAse" class="form-label">Fecha Ingreso</label>
+            </div>
+            <div class="col-sm-8">
+                <input
+                  type="date"
+                  class="form-control"
+                  id="inputfecIngAse"
+                  name="inputfecIngAse"
+                  required
+                />
+
+
+                <!--<input  type="text"
+                    class="form-control"
+                    name="inputfecIngAse"
+                    id="inputfecIngAse"-->
+                
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Datos del Monitoreo</h2>
+    <!--Datos del auditor-->
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="inputCueAse" class="form-label">Cuenta</label>
+                </div>
+                <div class="col-sm-6">
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="inputCueAse"
+                    name="inputCueAse"
+                    required
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="inputOrdAse" class="form-label">Orden</label>
+                </div>
+                <div class="col-sm-6">
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="inputOrdAse"
+                    name="inputOrdAse"
+                    required
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="inpFechAge" class="form-label">Fecha agendamiento</label>
+                </div>
+                <div class="col-sm-6">                    
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="inpFechAge"
+                      name="inpFechAge"
+                      required
+                    />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="SelTipOrd" class="form-label">Tipo de orden</label>
+                </div>
+                <div class="col-sm-6">
+                    <select type="text" class="form-select form-select-sm" aria-label=".form-select-lg example"
+                     id="SelTipOrd" name="SelTipOrd" >
+                        <option selected>Seleccione...</option>                        
+                        
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-6">
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label for="inputidlla" class="form-label">ID LLAMADA WFO</label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" id="inputidlla" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label for="SelRazonMon" class="form-label">Razon</label>
+                </div>
+                <div class="col-md-8">
+                    <select class="form-select form-select-sm" aria-label=".form-select-lg example"
+                            name="SelRazonMon"
+                            id="SelRazonMon"
+                            >
+                            <option selected>Seleccione...</option>
+                            {% for i in DicDatForm['COMODIN1'] %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!--<div class="form-group row">
+                <div class="col-md-4">
+                    <label for="selHorReg" class="form-label">Hora registro</label>
+                </div>
+                <div class="col-md-8">
+                    <select class="form-select form-select-sm"
+                            aria-label=".form-select-lg example"
+                            name="selHorReg"
+                            id="selHorReg"
+                            >
+                            <option selected>Seleccione...</option>
+                            {% for i in DicDatForm['Tiempos'] %}
+                                <option >{{i}}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+            </div>-->
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <input type="text" hidden id="inputIteAfe" >
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--Datos del monitoreo observaciones-->
+    <div class="row">
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label for="inpuObseMon" class="form-label">Observaciones</label>
+            </div>
+            <div class="col-md-10"></div>
+            <textarea
+                    class="form-control"
+                    id="inpuObseMon"
+                    name="inpuObseMon"
+                    required
+                >
+            </textarea>
+            </div>
+    </div>
+    <hr style="border-color: cornflowerblue" />

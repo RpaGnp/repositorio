@@ -1,0 +1,33 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; /* Fuerza el ancho de las columnas */
+    color: black !important;
+}
+
+/* Estilo para las celdas del encabezado */
+th {
+    background-color: #f2f2f2;
+}
+
+/* Estilo para las celdas de la tabla */
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+/* Estilo para el contenedor del tbody con desplazamiento */
+.table-container {
+    max-height: 300px; /* Altura máxima del tbody con desplazamiento */
+    overflow-y: auto; /* Activar el desplazamiento vertical */
+    position: relative; /* Necesario para posicionar el thead */
+}
+
+/* Estilo para el thead fijo */
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 1; /* Asegura que el encabezado esté sobre el tbody */
+}

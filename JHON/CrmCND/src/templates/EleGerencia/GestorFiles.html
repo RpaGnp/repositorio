@@ -1,0 +1,353 @@
+{% extends 'BaseDashboard.html' %} {% block title %}CRM CND{% endblock %} {%
+block Body %}
+<h5>Modulo gestion archivos gerencia</h5>
+{% with messages =get_flashed_messages() %} {% if
+  messages %}
+  <br />
+  {% for i in messages %}
+  <div class="alert alert-primary allert-dismissible" role="alert">
+    <strong>{{ i }}</strong>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+
+  {% endfor %} {% endif %} {% endwith %}
+
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col">
+        <button
+          type="submit"
+          data-bs-toggle="modal"
+          data-bs-target="#mdladdfile"
+          class="btn btn-primary"
+          name="btnaddpreturno"
+          id="btnaddpreturno"
+          onclick="ClearForm()"
+        >
+          Nuevo
+        </button>
+      </div>
+      <div class="col">
+        <div class="form-group row align-items-center">
+          <label for="selectmes" class="col-sm-2 col-form-label text-center"
+            >Mes</label
+          >
+          <div class="col-sm-10">
+            <select class="custom-select" name="selectmes" id="selectmes">
+              <script>
+                const selectormes = document.getElementById("selectmes");
+                for (let mes of [
+                  "Todos",
+                  "Enero",
+                  "Febrero",
+                  "Marzo",
+                  "Abril",
+                  "Mayo",
+                  "Junio",
+                  "Julio",
+                  "Agosto",
+                  "Septiembre",
+                  "Octubre",
+                  "Noviembre",
+                  "Diciembre",
+                ]) {
+                  let opt = document.createElement("option");
+                  opt.value = mes;
+                  opt.innerHTML = mes;
+                  selectormes.appendChild(opt);
+                }
+                const nmes = new Date().getMonth() + 1;
+                const JsonMes = {
+                  1: "Enero",
+                  2: "Febrero",
+                  3: "Marzo",
+                  4: "Abril",
+                  5: "Mayo",
+                  6: "Junio",
+                  7: "Julio",
+                  8: "Agosto",
+                  9: "Septiembre",
+                  10: "Octubre",
+                  11: "Noviembre",
+                  12: "Diciembre",
+                };
+
+                selectormes.value = JsonMes[nmes];
+              </script>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<table class="table table-striped table-hover table-sm" id="tblhfiles">
+  <thead>
+
+  <tr>
+    <th style="display: none">Idfile</th>
+    <th>Nombre</th>
+    <th>Fecha archivo</th>
+    <th>detalle</th>
+    <th>Usuario</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody id="tblFiles"></tbody>
+</table>
+
+<!--Nodal-->
+<div
+  class="modal fade"
+  id="mdladdfile"
+  tabindex="-1"
+  aria-labelledby="lbltitulomodal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="lbltitulomodal">Agregar archivo</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="border rounded p-4">
+          <form
+            action="{{ url_for('uploaderFilGer') }}"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <div class="form-row">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <input
+                type="hidden"
+                id="OpcionGestion"
+                name="OpcionGestion"
+                value="Nuevo"
+              />
+              <input type="hidden" id="IdFile" name="IdFile" value="" />
+              <div class="form-group col-4">
+                <label for="inpTipoFile">Tipo archivo</label>
+                <select class="form-select" name="inpTipoFile" id="inpTipoFile">
+                  <option value=''>..::Selecione::..</option>;
+                  <option value='CONFIRMACION'>CONFIRMACION</option>;
+                  <option value='ADELANTOS'>ADELANTOS</option>;
+                  <option value='REPORTE DE DEMORA'>REPORTE DE DEMORA</option>;
+                  <option value='SERVICIO OK'>SERVICIO OK</option>;
+                  <option value='AVISO ABIERTO'>AVISO ABIERTO</option>;
+                  <option value='AGENDAMIENTO'>AGENDAMIENTO</option>;
+                </select>
+              </div>
+              <div class="form-group col-4">
+                <label for="inpRegionfile">Regional
+                </label>
+                <select
+                  class="form-control"
+                  name="inpRegionfile"
+                  id="inpRegionfile"
+                >
+                <option value=''>..::Selecione::..</option>;
+                <option value='CENTRO'>CENTRO</option>;
+                <option value='OCCIDENTE'>OCCIDENTE</option>;
+                <option value='ORIENTE'>ORIENTE</option>;
+                </select>
+              </div>
+              <div class="form-group col-4">
+                <label for="inpdesfile">Descripción</label>
+                <textarea
+                  type="text"
+                  class="form-control"
+                  name="inpdesfile"
+                  id="inpdesfile"
+                  placeholder="Detalle"
+                ></textarea>
+              </div>
+            </div>
+            <!-- Input type file -->
+            <div class="form-group row align-items-center">
+              <div class="mb-3">                
+                <input class="form-control form-control-sm" id="formFileSm" name="formFileSm" type="file" multiple>
+              </div>                
+            </div>
+            <div class="form-group row align-items-center">
+              <label class="visually">Lista de archivos a subir al repocitorio</label>
+              <ol id="ListItemsSel">
+
+
+
+              </ol>
+
+
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cerrar
+              </button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="list" id="list"></div>
+  <div class="pagenumbers pagination justify-content-center" id="pagination"></div>
+
+<script src="{{ url_for('static', filename='/js/funcionesApp/ArbolFunciones.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/funcionesApp/funcionesdashboard/pagination.js') }}"></script>
+<script>
+  document.getElementById('formFileSm').addEventListener('change', function(e){
+    var lista=document.getElementById('ListItemsSel')    
+    while (lista.hasChildNodes()) {
+          lista.removeChild(lista.firstChild);
+        }        
+    for(let file of [document.getElementById('formFileSm').textContent = e.target.value]){
+      var item=document.createElement('li')
+      item.innerHTML=file
+      lista.appendChild(item)
+    }
+  })
+  function ClearForm(){
+      ArrayElementos=["inpnomfile","inpfecingfile","inpdespreturno"]
+      for( i of ArrayElementos){
+        document.getElementById(i).value=""
+      }
+    }
+
+  ///////////////////////////////////
+
+  function Actualizar( ){
+      var list_element = document.getElementById('tblFiles');
+      var pagination_element = document.getElementById('pagination');
+      var messelected=document.getElementById('selectmes').value      
+			options=HeaderFetch("{{ csrf_token() }}",{Option:'GetFilemes',mesdata:messelected})
+      
+      fetch("/ConsultorDatos",options).then(response => response.text()).then(data => {      
+      const  list_items  = JSON.parse(data);
+      const current_page = 1;
+      const rows = 50;
+
+      DisplayList(list_items, list_element, rows, current_page);
+      SetupPagination(list_items, pagination_element, rows,current_page);
+      function DisplayList (items, wrapper, rows_per_page, page) {
+      wrapper.innerHTML = "";
+      page--;
+
+      let start = rows_per_page * page;
+      let end = start + rows_per_page;
+      let paginatedItems = items.slice(start, end);
+
+      for (let i = 0; i < paginatedItems.length; i++) {
+        let item = paginatedItems[i];
+
+        let row_element = document.createElement('tr');
+        row_element.classList.add('item');
+        wrapper.appendChild(row_element);
+
+        for(var ci=0;ci<=5;ci++){
+          let td = document.createElement('td');
+          if (ci==0){td.style="display:none;";td.id="pathDw";td.innerText = item[ci]}          
+          else if (ci==5){             
+              ArrayBotones=[["Descargar","btndwfile"]]
+              for (let btn of ArrayBotones) {
+                btns = document.createElement("button");
+                btns.classList.add("btn");
+                btns.id=btn[1]
+                btns.innerHTML=btn[0]
+                td.appendChild(btns)};
+              }
+          else{
+            td.innerText = item[ci];
+          }
+          row_element.appendChild(td);
+          wrapper.appendChild(row_element);
+          }
+
+      }
+      }
+
+
+      function SetupPagination (items, wrapper, rows_per_page,page) {
+        wrapper.innerHTML = "";
+
+        let page_count = Math.ceil(items.length / rows_per_page);
+        for (let i = 1; i < page_count + 1; i++) {
+          let btn = PaginationButton(i, items,page);
+          wrapper.appendChild(btn);
+        }
+      }
+
+      function PaginationButton (page, items,current_page) {
+        let button = document.createElement('button');
+        button.classList.add('page-link')
+        button.innerText = page;
+
+        if (current_page == page) button.classList.add('active');
+
+        button.addEventListener('click', function () {
+          current_page = page;
+          DisplayList(items, list_element, rows, current_page);
+
+          let current_btn = document.querySelector('.pagenumbers button.active');
+          current_btn.classList.remove('active');
+
+          button.classList.add('active');
+        });
+
+        return button;
+      }
+        })
+    }
+
+    
+
+    $("#selectmes").change(function() {
+      Actualizar()
+    });
+    
+    $( document ).ready(function() {
+      Actualizar()
+    })
+
+    $("#tblFiles").on('click','#btndwfile',function(){
+      var currentRow=$(this).closest("tr");
+      var colid=currentRow.find("td:eq(0)").text();
+      //var nameFile=
+      options=HeaderFetch("{{ csrf_token() }}",{Option:'DwFile',PretId:colid})
+            fetch("/ConsultorDatos",options)            
+            .then(response => {
+              const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
+              response.blob().then(blob => {
+              let url = window.URL.createObjectURL(blob);
+              let a = document.createElement('a');
+              a.href = url;
+              a.download = filename;
+              a.click();
+            })
+          })})
+    
+  
+</script>
+
+{% endblock %}

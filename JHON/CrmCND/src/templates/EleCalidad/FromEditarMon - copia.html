@@ -1,0 +1,791 @@
+{% extends 'BaseDashboard.html' %} {% block title %}CRM CND{% endblock %}
+{% block Body %}
+<style>
+  form, label {
+    color: black;
+  }
+  form input {
+    color: black !important;
+  }
+
+  form select input {
+    border: 1px solid black;
+  }
+
+  #tblNotas th {
+    border: 1px solid black !important;
+  }
+
+  form{
+    text-align: left !important;
+    }
+</style>
+<h1 class="h3 mb-3 text-gray-800">Editar Muestas</h1>
+
+<div class="form-group row">
+  <div class="col-6">
+            <div class="input-group">
+                <input type="text" class="form-control bg-light border-0 small" id="InpCasoBus"  placeholder="Buscar Muesta"
+                       aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" id="btn-buscarcaso">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+      </div>
+    </div>
+    <div class="col-6">
+
+    </div>
+
+<table class="table table-bordered table-ligth mx-2" id="tblNotas">
+  <thead>
+    <tr>
+      <th scope="Col">Nota Muestra</th>
+      <th colspan="1" scope="Col">EC</th>
+      <th colspan="1" scope="Col">ENC</th>
+      <th colspan="1" scope="Col">TE</th>
+    </tr>
+    <tr>
+      <th scope="col" style="background-color: #4ed2ad ;color: black;" id="lbl_NotMonTotal">100</th>
+      <th scope="col" id="lbl_NotMonec">0</th>
+      <th scope="col" id="lbl_NotMonenc">0</th>
+      <th scope="col" id="lbl_NotMonte">0</th>
+    </tr>
+  </thead>
+</table>
+
+<form class="row g-3 mt-3" autocomplete="off">
+  <!--method="post" action="/MonReg"-->
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h2>Datos del auditor</h2>
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="inpSede" class="form-label">CND</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="inpSede"
+              id="inpSede"
+            >
+              <option selected>Seleccione...</option>
+              {% for i in DicDatForm['CND'] %}
+              <option value="{{i}}">{{i}}</option>
+              {% endfor%}
+            </select>            
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SelAreaMon" class="form-label"
+              >Area que monitorea</label
+            >
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SelAreaMon"
+              id="SelAreaMon"
+            >
+              <option selected>Seleccione...</option>
+              {% for i in DicDatForm['AREAMON'] %}
+              <option value="{{i}}">{{i}}</option>
+              {% endfor%}
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SelAuditor" class="form-label">Auditor</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SelAuditor"
+              id="SelAuditor"
+            >
+              <option selected value="none">Seleccione...</option>
+              {% for i in DicDatForm['AUDITOR']%}
+              <option>{{i['NombreAud']}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SeltipGes" class="form-label">Gestion</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SeltipGes"
+              id="SeltipGes"
+            >
+              <option selected>Seleccione...</option>
+              {% for i in DicDatForm['PORCESO'] %}
+              <option value="{{i}}">{{i}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="SeltipMon1" class="form-label">Tipo de monitoreo</label>
+          </div>
+          <div class="col-sm-6">
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              name="SeltipMon1"
+              id="SeltipMon1"
+            >
+              <option selected>Seleccione...</option>
+              {% for i in DicDatForm['TIPOAUD'] %}
+              <option value="{{i}}">{{i}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="inputFechMon" class="form-label">Fecha Monitoreo</label>
+          </div>
+          <div class="col-sm-6">
+            <input
+              type="date"
+              class="form-control"
+              id="inputFechMon"
+              name="inputFechMon"
+              required
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <h2>Datos agente</h2>
+        <div class="form-group row">
+          <div class="col-sm-4">
+            <label for="inputCedAse" class="form-label">Cedula asesor</label>
+          </div>
+          <div class="col-sm-8">
+            <input
+              type="text"
+              class="form-control"
+              id="inputCedAse"
+              name="inputCedAse"
+            />
+          </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputNomAse" class="form-label">Nombre asesor</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputNomAse" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputProAse" class="form-label">Proceso asesor</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputProAse" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputCooAse" class="form-label">Coordinador</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputCooAse" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputForAse" class="form-label">Login</label>
+            </div>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputForAse" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <label for="inputfecIngAse" class="form-label">Fecha Ingreso</label>
+            </div>
+            <div class="col-sm-8">
+                <input
+                  type="date"
+                  class="form-control"
+                  id="inputfecIngAse"
+                  name="inputfecIngAse"                                    
+                />
+
+
+                <!--<input  type="text"
+                    class="form-control"
+                    name="inputfecIngAse"
+                    id="inputfecIngAse"-->
+                
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Datos del Monitoreo</h2>
+    <!--Datos del auditor-->
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="inputCueAse" class="form-label">Cuenta</label>
+                </div>
+                <div class="col-sm-6">
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="inputCueAse"
+                    name="inputCueAse"
+                    required
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="inputOrdAse" class="form-label">Orden</label>
+                </div>
+                <div class="col-sm-6">
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="inputOrdAse"
+                    name="inputOrdAse"
+                    required
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="inpFechAge" class="form-label">Fecha agendamiento</label>
+                </div>
+                <div class="col-sm-6">                    
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="inpFechAge"
+                      name="inpFechAge"
+                      required
+                    />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="SelTipOrd" class="form-label">Tipo de orden</label>
+                </div>
+                <div class="col-sm-6">
+                    <select type="text" class="form-select form-select-sm" aria-label=".form-select-lg example"
+                     id="SelTipOrd" name="SelTipOrd" >
+                        <option selected>Seleccione...</option>
+                        {% for i in DicDatForm['TIPOORDEN'] %}
+                            <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-6">
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label for="inputidlla" class="form-label">ID LLAMADA WFO</label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" id="inputidlla" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label for="SelRazonMon" class="form-label">Razon</label>
+                </div>
+                <div class="col-md-8">
+                    <select class="form-select form-select-sm" aria-label=".form-select-lg example"
+                            name="SelRazonMon"
+                            id="SelRazonMon"
+                            >
+                            <option selected>Seleccione...</option>
+                            {% for i in DicDatForm['COMODIN1'] %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!--<div class="form-group row">
+                <div class="col-md-4">
+                    <label for="selHorReg" class="form-label">Hora registro</label>
+                </div>
+                <div class="col-md-8">
+                    <select class="form-select form-select-sm"
+                            aria-label=".form-select-lg example"
+                            name="selHorReg"
+                            id="selHorReg"
+                            >
+                            <option selected>Seleccione...</option>
+                            {% for i in DicDatForm['Tiempos'] %}
+                                <option >{{i}}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <input type="text" hidden id="inputIteAfe" required>
+                </div>
+            </div>-->
+
+        </div>
+    </div>
+    <!--Datos del monitoreo observaciones-->
+    <div class="row">
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label for="inpuObseMon" class="form-label">Observaciones</label>
+            </div>
+            <div class="col-md-10"></div>
+            <textarea
+                    class="form-control"
+                    id="inpuObseMon"
+                    name="inpuObseMon"
+                >
+            </textarea>
+            </div>
+    </div>
+    <hr style="border-color: cornflowerblue" />
+
+    <div class="accordion" id="accordionItemsForm">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseItemsCali"
+           aria-expanded="true" aria-controls="collapseItemsCali">
+            Items calificados
+          </button>
+        </h2>
+        <div id="collapseItemsCali" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionItemsForm">
+          <div class="accordion-body">
+            <table
+              class="table table-bordered"
+              style="justify-content: center; text-align: left; color:black"
+            >
+              <thead>
+                <tr>
+                  <th scope="col" hidden>IDITEM</th>
+                  <th scope="col">BLOQUE DE EVALUACIÓN</th>
+                  <th scope="col">PUNTO DE CONTROL</th>
+                  <th scope="col">TIPOLOGÍA</th>
+                  <th scope="col">PUNTO DE ENTRENAMIENTO</th>
+                  <th scope="col">TIPO</th>
+                  <th scope="col">PESO</th>
+                  <th scope="col">CUMPLIMIENTO</th>
+                </tr>
+              </thead>
+              <tbody style="font-size: 10px" id="tbl_formularioMon"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <!--Botones-->
+    <div class="row" style="text-align: center;">
+        <div class="col-sm-12">
+            <button
+            type="button"
+            id="Btn-GraForEdi"            
+            class="btn btn-primary"
+            >
+            Grabar
+            </button>
+        </div>
+
+        
+</div>
+
+</form>
+<!-- Monitoreo Modal-->
+
+<div
+  class="modal fade modal-fullscreen-xxl-down"
+  id="FormCalidadModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myLargeModalLabel"
+  aria-hidden="true"
+  style="width: 100%"
+>
+  <div class="modal-dialog" style="max-width: 90%" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Fromulario Monitoreo
+        </h5>
+      </div>
+      <div
+        class="modal-body"
+        style="height: 100%; width: 100%; overflow-y: auto"
+      >
+        
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="btn-CloseModalFormMon"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          Cerrar
+        </button>
+        <button type="button" id="btn-guaForMon" class="btn btn-primary">
+          Guardar cambios
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--Modal Confirmacion envio-->
+<!-- Button to Open the Modal -->
+<!-- The Modal -->
+<div class="modal" id="ModalConfMon">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Operacion exitosa!</h4>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body" id="AlertCasoCreado">
+        Datos de monitoreo guardados con exito! caso # numero
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="{{ url_for('static', filename='/js/funcionesApp/ArbolFunciones.js') }}"></script>
+<script>    
+  var csrf_token = "{{ csrf_token() }}";
+  var op_num = { ced: 0 };
+  var idMon="{{current_user.id}}";
+  var CasoBuscar=null;
+  $(function () {    
+
+
+    $("#btn-guaForMon").click(function () {
+      x = document.querySelector("#btn-guaForMon");
+      x.removeAttribute("data-dismiss");
+      var rowsTable = document.getElementById("tbl_formularioMon").rows.length;
+      var arrayItems = new Array();
+      var arrayCalif = new Array();
+      var datos = [];
+      var objeto = {};
+
+      for (let i = 0; i < rowsTable; i++) {
+        var idItem = document.getElementById("Row" + i + "col0").innerHTML;
+        var Item = document.getElementById("Row" + i + "col3").innerHTML;
+        var Peso = document.getElementById("Row" + i + "col5").innerHTML;
+        var Precicion = document.getElementById("Row" + i + "col4").innerHTML;
+        var evalItem = document.getElementById("Row" + i + "col7");
+
+        var OpcSel = evalItem.options[evalItem.selectedIndex].text;
+        if (OpcSel == "Seleccione...") {
+          document.getElementById("Row" + i + "col7").focus();
+          return;
+        } else {
+          datos.push({
+            IdItem: idItem,
+            Item: Item,
+            Peso: Peso,
+            Precicion: Precicion,
+            Calificacion: OpcSel,
+          });
+        }
+      }
+
+      objeto.datos = datos;
+      DicCal = JSON.stringify(objeto);
+      $("#inputIteAfe").val(JSON.stringify(objeto));
+      /*colocar al boton propiedad para ocultar modal*/
+      x = document.querySelector("#btn-guaForMon");
+      x.setAttribute("data-dismiss", "modal");
+      /*hacer los calculos para nota*/
+      //alert("calcular nota!")
+      $.ajax({
+        type: "POST",
+        url: "/CalcNotaMon",
+        data: { DatoForm: DicCal },
+        dataType: "json",
+        headers: {
+          "X-CSRFToken": csrf_token,
+        },
+      }).done(function (data) {
+        $("#lbl_NotMonTotal").html(data["NotaTotal"]);
+        $("#lbl_NotMonec").html(data["TotalCrit"]);
+        $("#lbl_NotMonenc").html(data["TotalNoCritico"]);
+        $("#lbl_NotMonte").html(data["SumaCritico"]);
+        //var ConItem = "";
+        //for (var i of data["ItemsAfec"]) {
+        //  ConItem += "-" + i + "\n";
+        //}
+        $("#inputIteAfe").val(ConItem);
+      });
+    });
+
+    /*funcion pra enviar el formulario completo  base de datos*/
+    $("#Btn-GraForEdi").click(function () {
+        datos=[]
+        //datos de los inputs
+        for (let dato of ["inputCedAse","inpSede","inputFechMon","inputCueAse","inputOrdAse","inpFechAge","inputidlla","inpuObseMon"]) {
+          datos.push(document.getElementById(dato).value);
+        };
+      //datos de los selects
+      for (let selector of ["SelAreaMon","SelAuditor","SeltipGes","SeltipMon1","SelTipOrd","SelRazonMon"]){
+        var evalItem = document.getElementById(selector);
+        var OpcSel = evalItem.options[evalItem.selectedIndex].text;
+        if (OpcSel == "Seleccione...") {
+          document.getElementById(selector).focus();
+          datos=[]
+          return;
+        }else{
+            datos.push(OpcSel);
+        }
+      }
+      datos.push("N/A");
+      //valores label calificacion
+      for (let dato of [
+        "lbl_NotMonTotal",
+        "lbl_NotMonec",
+        "lbl_NotMonenc",
+        "lbl_NotMonte",
+      ]) {
+        datos.push(document.getElementById(dato).innerHTML);
+      }
+      //var IdAuditor=${current_user.id}
+
+
+      datos.push(GetItemCal());
+      var CasoBuscar=$('#InpCasoBus').val()
+      datos=[CasoBuscar,datos[0],idMon ,datos[1],datos[8],datos[9],datos[10],datos[11],datos[2],datos[3],datos[4],datos[5],datos[12],
+      datos[6],datos[13],datos[14],datos[7],datos[19]];
+      
+      //const jsonString = JSON.stringify(Object.assign({}, datos));
+      //console.log(jsonString)
+      ArrayKeys=["IdMuestra","CedulaAse","CedAud","SedeAud","AreaAu","NomAud","TipItems","TipoAud",
+                "FecMon","Cuenta","Orden","FecAge","TipOrden","IdLlWfo","Razon","HorReg","DetaMon",
+                "JsonCaliItems"]
+      jsonString=makeJson(ArrayKeys,datos)
+      //console.log(jsonString)
+      options=HeaderFetch(csrf_token,jsonString)
+      fetch("/UpdMuesta",options).then(response => response.text())
+            .then(data => {
+                //consultar la nota y actualizarla en tablero y mostar modal, refrescar pagina
+                Swal.fire({
+                    title: 'Confirmacion Modificacion',
+                    text: "Se a actualizado la muestra con exito!",
+                    icon: 'success',
+                    showCloseButton: true,                                        
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.href ="/EditarMonitoreo";
+                    }
+                  })
+                  var CasoBuscar=null;
+            })
+
+      /*$.ajax({
+        type: "POST",
+        url: "/updgestionMon",
+        data: { DatoMon: jsonString },
+        dataType: "json",
+        headers: {
+          "X-CSRFToken": csrf_token,
+        },
+      }).done(function (data) {
+        console.log(data["RadMonitoreo"]);
+        var casoCreado =
+          "Se ha creado el caso " +
+          data["RadMonitoreo"] +
+          " con exito!\nconsultelo en el historial de monitoreos";
+        $("#AlertCasoCreado").html(casoCreado);
+        $("#ModalConfMon").modal("show");
+        location.href ="/NuevoMonitoreo";
+      });*/
+    });
+
+
+    $('#btn-buscarcaso').click(function (){
+      let list = document.getElementById("tbl_formularioMon");
+        while (list.hasChildNodes()) {
+          list.removeChild(list.firstChild);
+        }
+        if ($('#InpCasoBus').val()==""){
+          Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Ingrese un numero de muestra valido!'
+        })
+
+        }else{
+            var CasoBuscar=$('#InpCasoBus').val()
+            options=HeaderFetch(csrf_token,{Gestion:'GetDatCaso',CasoBuscar:CasoBuscar})            
+            fetch('/AppDataBase',options).then(response => response.text())
+                .then(data => {
+                    const json = JSON.parse(data)
+                    if (json['DataEvaluador']==0 & json['DataForm']==0){
+                      Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: 'Numero de muestra no existe'
+                    })
+                      return
+                    }
+                    else{
+                      Swal.fire({                      
+                      icon: 'success',
+                      title: 'Cargando datos',
+                      showConfirmButton: false,
+                      timer: 1500
+                    })
+
+                      // crear el modal en forma de tabla                      
+                      ArrayidTag=['#inpSede',"#SelAreaMon","#SelAuditor","#SeltipGes","#SeltipMon1","#inputFechMon",
+                        "#inputCedAse","#inputNomAse","#inputProAse","#inputCooAse","#inputForAse","#inputfecIngAse",
+                        "#inputCueAse","#inputOrdAse","#inpFechAge","#SelTipOrd","#inputidlla","#SelRazonMon",
+                          "#selHorReg","#inpuObseMon"]
+                          
+                      console.log(Object.values(json['DataForm']))
+                      FillData(Object.values(json['DataForm']),ArrayidTag)                    
+                      
+                      
+                      
+                      //traer notas tambien
+                      ArrayNotas=[21,22,23,24]
+                      contador=0
+                      for(var i of ['lbl_NotMonTotal','lbl_NotMonec','lbl_NotMonenc','lbl_NotMonte']){
+                        document.getElementById(i).innerHTML = json['DataForm'][ArrayNotas[contador]]
+                        contador+=1
+                      }
+                      delete contador
+
+                      // datos items calificados
+                      var values = json["DataEvaluador"];
+                      lista = document.getElementById("tbl_formularioMon");
+                      for (let i = 0; i < values.length; i++){
+                          let obj = values[i];
+                          let row = Object.values(obj);
+                          
+                          var tr = document.createElement("tr");
+                          var columna0 = document.createElement("td");
+                          columna0.innerHTML = row[0];
+                          columna0.setAttribute("id", "Row" + i + "col0");
+                          columna0.setAttribute("style", "display:none");
+
+                          /*console.log('#TblFormcol'+i+'-'+j);*/
+                          var columna1 = document.createElement("td");
+                          columna1.innerHTML = row[1];
+                          columna1.setAttribute("id", "Row" + i + "col1");
+
+                          var columna2 = document.createElement("td");                          
+                          columna2.innerHTML = row[2];
+                          columna2.setAttribute("id", "Row" + i + "col2");
+
+                          var columna3 = document.createElement("td");
+                          columna3.innerHTML = row[3];
+                          columna3.setAttribute("id", "Row" + i + "col3");
+
+                          var columna4 = document.createElement("td");
+                          columna4.innerHTML = row[4];
+                          columna4.setAttribute("id", "Row" + i + "col4");
+                          
+                          var columna5 = document.createElement("td");
+                          columna5.innerHTML = row[5];
+                          columna5.setAttribute("id", "Row" + i + "col5");
+                          
+                          var columna6 = document.createElement("td");
+                          columna6.innerHTML = row[6];
+                          columna6.setAttribute("id", "Row" + i + "col6");
+
+                          var columna7 = document.createElement("td");                          
+                          columna7.setAttribute("id", "Row" + i + "col7");
+                          columna7.style.height="height: 100px;"
+
+                          let select = document.createElement("select");
+                          select.setAttribute("class", "form-select");
+                          select.setAttribute("id", "SelRow" + i + "col7");
+                          select.style.width = "200px";
+                          
+                          select.style.padding = "0px 0px 0px 0px";
+                          
+
+                          // opciones para selector
+                          if(row[3]!="ESCALA 1 A 5"){
+                            ArrayOpciones=["No aplica","Cumple","No cumple"]
+                          }else{
+                            ArrayOpciones=["No aplica",1,2,3,4,5]
+                          }
+                          for(var opcion of ArrayOpciones){
+                            let option = document.createElement("option");                                                    
+                            option.setAttribute("value", opcion);                          
+                            option.innerHTML=opcion;
+                            select.appendChild(option);
+                          }
+                          select.value=row[7]                          
+                          columna7.appendChild(select);
+                          
+                          
+                          for(var celda of[columna0,columna1,columna2,columna3,columna4,
+                          columna5,columna6,columna7]){
+                            tr.appendChild(celda)}
+                          lista.appendChild(tr);
+                      }
+                      
+                    }})}})})
+                      
+            
+      
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,140 @@
+<!--Modulo subir notas-->
+<div class="modal fade" id="ModgesNotasPreturno" tabindex="-1" aria-labelledby="lblmodgesnotpre" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">      
+        <div class="modal-header">
+          <h5 class="modal-title" id="lblmodgesasis">Cargar archivo notas</h5>
+          <input type="text" id="inpIdpreturno" value="0" hidden>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row align-items-center">
+            <form action="/lectorXLSform" method="post" enctype="multipart/form-data"> 
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="idAseForm" value="{{ current_user.id }}"/>
+                <input type="hidden" name="idPreForm" id="idPreForm" value=""/>
+                <div class="row">
+                <div class="col-3">
+                    <label for="formFile" class="form-label">Importar archivo de notas</label>
+                </div>
+                <div class="col-7">
+                    <input class="form-control" type="file" value="" name="upload-file" id="formFile" accept=".xlsx, .xls">
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-download fa-sm text-white-50"></i>
+                        Cargar</button>
+                </div>
+                </div>
+            </form>
+          
+          
+        </div>
+  
+  
+        </div>        
+      </div>
+    </div>
+  </div>
+
+<!--Modulo subir Evaluaciones-->
+<div class="modal fade" id="ModgesEvaluaciones" tabindex="-1" aria-labelledby="lblmodgesEva" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">      
+        <div class="modal-header">
+          <h5 class="modal-title" id="lblmodgesasis">Crear evaluaciones</h5>
+          <input type="text" id="inpIdpreturno" value="0" hidden>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row align-items-center">
+            <form action="/lectorEval" method="post" enctype="multipart/form-data"> 
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="idAseForm" value="{{ current_user.id }}"/>
+                <input type="hidden" name="idPreForm" id="idPreForm" value=""/>
+                <div class="row">
+                <div class="col-3">
+                    <label for="formFile" class="form-label">Importar archivo de notas</label>
+                </div>
+                <div class="col-7">
+                    <input class="form-control" type="file" value="" name="upload-file" id="formFile" accept=".xlsx">
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-download fa-sm text-white-50"></i>
+                        Cargar</button>
+                </div>
+                </div>
+            </form>
+          
+          
+        </div>
+  
+  
+        </div>        
+      </div>
+    </div>
+  </div>
+
+
+<!--Modulo asistencia 2-->
+<div class="modal fade" id="Modgesasistencia" tabindex="-1" aria-labelledby="lblmodgesasis" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-scrollable modal-xl">
+    <div class="modal-content">      
+      <div class="modal-header">
+        <h5 class="modal-title" id="lblmodgesasis">Registro de asistencia</h5>
+        <input type="text" id="inpIdpreturno" value="0" hidden>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row align-items-center">
+          <label for="select_id_1" class="col-sm-2 col-form-label">Busqueda</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="inpnameaseasi" placeholder="Nombres o apellidos">                    
+          </div>
+          <div class="col-sm-2">
+            <input type="button" class="btn btn-info" id="btnbusaseasi" value="Buscar">
+          </div>
+        
+        <table class="table table-sm table-striped" id="tblasispret" width="100%">
+          
+          <thead>
+           <tr>            
+            <th hidden>Id</th>
+            <th>Nombres</th>
+            <th>Campaña</th>
+            <th>Fecha</th>            
+            <th>
+                <label class="checkbox">
+                  <input type="checkbox" class="checkAll" id="checkAllAsi"onclick="toggleAsi(this);">
+                  <span class="checkbox-label">Asistencia</span>
+              </label>            
+            </th>
+
+            <th>
+                <span class="checkbox-label">Novedad</span>
+              
+            </th>
+            <th>
+              <span class="checkbox-label">Clase novedad</span>
+            </th>
+            
+            
+           </tr>
+          </thead>
+        
+          <tbody id="tblbodasipre">          
+        
+          </tbody>
+        </table>
+      </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="btnguaasipre">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>

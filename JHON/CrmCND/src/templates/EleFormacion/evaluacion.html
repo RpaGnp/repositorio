@@ -1,0 +1,147 @@
+{% extends './baseDashboard.html'%}
+
+{% block title %}Crm Formacion{% endblock %}
+
+{% block callscripts %}
+    <script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/classes/CallApis.js') }}"></script>
+    
+{% endblock %}
+
+
+{% block Body %}
+{% include 'EleFormacion/Modales.html' %}
+
+<h3>Presentacion evaluacion</h3>
+<!--<div>
+    <div class="row">
+        <div class="col-2">
+            <a type="button" target="_blank"  href="{{ url_for('Enrrutador',application_name='CrearEvaluacion')}}" class="btn btn-info" value="Nuevo" id="btnAddEva">Nuevo</a>
+        </div>
+    </div>
+</div>-->
+{% set Contador  = 1 %}
+{% for dic in  ArrayPreguntas %}
+    <form action="">
+        <input type="text" hidden id="csrfIdEva" data-csrf="{{ IdEvaluacion }}">
+
+    {% for data in dic.items() %}
+        <div class="row">    
+        <div class="card text-center shadow p-3 mb-5 bg-body rounded mb-3">
+            <div class="card-header">
+                <strong>{{ data[0] }}</strong>-{{ data[1]['Pregunta'] }}            
+            </div>
+            <div class="card-body">
+                {% if 'Files' in data[1] %}
+                    <img src="{{ url_for('static', filename='ImgEvaluaciones/' + data[1]['Files']['BinarioFile']) }}" alt="{{ data[1]['Files']['NombreFile'] }}">
+                {% endif %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Opción</th>
+                        <th>Respuesta</th>
+                    </tr>
+                    </thead>
+                    <tbody style="color:black; text-align: start;">
+                        {% if  data[1]['TipoPregunta'] in ['1b','2b'] %}                 
+                            {% for pregunta,respuesta in  data[1]['ResPre'].items() %}
+                                <tr>  
+                                    <td>{{pregunta}}</td>                                    
+                                    <td>
+                                        <Input id=" {{ respuesta }}" class="form-check-input" type="checkbox"></Input>
+                                    </td>
+                                </tr>                                
+                            </div>
+                            {% endfor %}
+                        {% elif  data[1]['TipoPregunta'] =='3b'%}
+                            {% for pregunta, respuesta in  data[1]['ResPre'].items() %}
+                            <tr>                                    
+                                <td>{{pregunta}}</td> 
+                                <td>
+                                    <select id=" {{ respuesta }}" class="form-select">
+                                        <option value="" required>..::Selecione::..</option>
+                                        {% for i in ["01","02","03","04","05"] %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr> 
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>            
+            </div>            
+        </div>
+        {% endfor %}
+    {% set Contador = Contador + 1 %}
+    </div>
+{% endfor %}
+    <textarea id="textresp" hidden></textarea>
+    <input type="button" name="" id="btnguaforasepre" class="btn btn-info" value="Enviar">
+</form>
+<script>   
+    const csrf_token = document.getElementById("csrf-token").getAttribute("data-csrf");  
+    const csrf_IdEva = document.getElementById("csrfIdEva").getAttribute("data-csrf");     
+    /*Funciones para el lector de preguntas*/
+    class HandleForm{
+        constructor(){
+            this.idasesor=1234
+
+            this.ArrayForm=[]
+            this.arraycard = document.querySelectorAll(".card")
+        }
+
+        async getdataform(){            
+            var ArrayDatos = []
+            this.arraycard.forEach(element => {
+                var jsonResp = {}
+                var Card = element.childNodes
+                var firstChild = Card[1];
+                var secondChild = Card[3];
+                jsonResp.IdPregunta=firstChild.childNodes[1].innerHTML
+
+                var tbody = secondChild.querySelector('.card-body table tbody')
+                var rows = tbody.querySelectorAll('tr');                  
+                var JsonTemp={}
+                for(var row of rows){
+                    var cells = row.querySelectorAll('td');
+                    if (cells.length === 2) {
+                        var Pregunta = cells[0].textContent;                        
+                        var inputOrSelect = cells[1].querySelector('input[type="checkbox"], select');                        
+                        if (inputOrSelect) {
+                            if (inputOrSelect.tagName === 'INPUT') {
+                                JsonTemp[Pregunta] = inputOrSelect.checked;                                                                
+                            } else if (inputOrSelect.tagName === 'SELECT') {
+                                JsonTemp[Pregunta] = inputOrSelect.options[inputOrSelect.selectedIndex].text;                                                                
+                            }
+                        }
+                    }                    
+                };
+                jsonResp.RespAsesor=JsonTemp
+                ArrayDatos.push(jsonResp)                
+            });
+            return ArrayDatos
+        }
+
+    }
+
+    const Handleform = new HandleForm()
+    document.getElementById('btnguaforasepre').addEventListener("click",async function(){
+        var RespAsesor = await Handleform.getdataform()
+        ResConf = await alertConfirmacion({'icono':"question","titulo":"Enviar respuestas evaluacion?",
+            'mensaje':'Esta seguro de enviar las respuestas registradas?'})
+        if(ResConf.isConfirmed){
+            var Calificacion = await new HandleApis(csrf_token,'/AppDataBase',{"Gestion":"UpdEvaPreAse","IdEvaPre":csrf_IdEva,"IdNumerario":"{{ idNumerario }}","Asesor":"{{ current_user.id }}","ArrayDatEva":RespAsesor }).callPromisePost()
+            showAlertsdec({'icon':"success",'Mensaje':'evaluacion realizada con exito su nota es:\n!'+Calificacion['Nota']})
+        }
+    })
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

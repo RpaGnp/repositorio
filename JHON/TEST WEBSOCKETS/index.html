@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const websocketUrl = 'ws://172.20.100.51:8765';
+            const websocket = new WebSocket(websocketUrl);
+
+            websocket.onopen = (event) => {
+                console.log('Conexión abierta');
+                // Envía el nombre del cliente al servidor
+                const name = 'Cliente1';
+                websocket.send(name);
+                console.log(`Nombre enviado: ${name}`);
+
+                // Envía un mensaje de "hola servidor" al servidor
+                const message = 'hola servidor';
+                websocket.send(message);
+                console.log(`Mensaje enviado: ${message}`);
+            };
+
+            websocket.onmessage = (event) => {
+                const data = event.data;
+                console.log('Mensaje recibido:', data);
+            };
+
+            websocket.onerror = (event) => {
+                console.error('Error en la conexión WebSocket:', event);
+            };
+
+            websocket.onclose = (event) => {
+                console.log('Conexión cerrada:', event);
+            };
+        });
+    </script>
+</body>
+</html>

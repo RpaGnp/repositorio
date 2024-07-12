@@ -1,0 +1,256 @@
+{% extends 'BaseDashboard.html' %}
+{% block title %}CRM DESPACHOS{% endblock %}
+
+{% block headers %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/Backlog/EstilosAsignacion.css')}}">
+{% endblock %}
+
+
+
+
+{% block callscripts %}
+    <script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+             
+{% endblock %}
+{% block Body %}
+<div>
+    <div class="card ms-2 me-2 mb-2 shadow-lg">        
+        <div class="card-body">
+            <form action="/Sendbasebacklog" method="post"  enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="row">
+                    <label class="col-sm-2 col-form-label" for="inpfilbasbacklog">Asignacion Base</label>
+                    <div class="col-sm-7">
+                        <input accept=".csv"  class="form-control mb-2" type="file" 
+                        name="inpfilbasbacklog" id="inpfilbasbacklog" required>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-success text-white" type="submit">Enviar</button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+              <button class="col-sm-2 btn btn-outline-info" id="btnupdhisraz">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-upload" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383"/>
+                  <path fill-rule="evenodd" d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708z"/>
+                </svg>
+              </button>
+              <p class="col-sm-3 text-red" id="lblestupbasemongo"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card ms-2 me-2 mb-2 shadow-lg">
+        <div class="row m-2">
+            <!--Funciones varias como filtros y fonsutas, descargas csv a la tabla-->
+            <label class="col-sm-1 col-form-label" for="inpfecgesback">Fecha</label>
+            <div class="col-sm-2">
+                <input  type="date" name="inpfecgesback" id="inpfecgesback">
+            </div>
+             <button class="col-sm-1 me-2 btn btn-outline-success btn-sm" type="button" name="btnfilgesback" id="btnfilgesback">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-download" viewBox="0 0 16 16">
+                <path d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383"/>
+                <path d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708z"/>
+              </svg>
+            </button>
+            <button class="col-sm-1 btn btn-outline-danger btn-sm" type="button" name="btndesbaseback" id="btndesbaseback" value="X"
+             data-bs-toggle="modal" data-bs-target='#mdldesbaseback'
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-check-fill" viewBox="0 0 16 16">
+              <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1m1.354 4.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+            </svg>
+            </button>
+            <button class="col-sm-1 me-2 ms-2 btn btn-outline-info btn-sm" id="btndwgesase">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filetype-csv" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM3.517 14.841a1.13 1.13 0 0 0 .401.823q.195.162.478.252.284.091.665.091.507 0 .859-.158.354-.158.539-.44.187-.284.187-.656 0-.336-.134-.56a1 1 0 0 0-.375-.357 2 2 0 0 0-.566-.21l-.621-.144a1 1 0 0 1-.404-.176.37.37 0 0 1-.144-.299q0-.234.185-.384.188-.152.512-.152.214 0 .37.068a.6.6 0 0 1 .246.181.56.56 0 0 1 .12.258h.75a1.1 1.1 0 0 0-.2-.566 1.2 1.2 0 0 0-.5-.41 1.8 1.8 0 0 0-.78-.152q-.439 0-.776.15-.337.149-.527.421-.19.273-.19.639 0 .302.122.524.124.223.352.367.228.143.539.213l.618.144q.31.073.463.193a.39.39 0 0 1 .152.326.5.5 0 0 1-.085.29.56.56 0 0 1-.255.193q-.167.07-.413.07-.175 0-.32-.04a.8.8 0 0 1-.248-.115.58.58 0 0 1-.255-.384zM.806 13.693q0-.373.102-.633a.87.87 0 0 1 .302-.399.8.8 0 0 1 .475-.137q.225 0 .398.097a.7.7 0 0 1 .272.26.85.85 0 0 1 .12.381h.765v-.072a1.33 1.33 0 0 0-.466-.964 1.4 1.4 0 0 0-.489-.272 1.8 1.8 0 0 0-.606-.097q-.534 0-.911.223-.375.222-.572.632-.195.41-.196.979v.498q0 .568.193.976.197.407.572.626.375.217.914.217.439 0 .785-.164t.55-.454a1.27 1.27 0 0 0 .226-.674v-.076h-.764a.8.8 0 0 1-.118.363.7.7 0 0 1-.272.25.9.9 0 0 1-.401.087.85.85 0 0 1-.478-.132.83.83 0 0 1-.299-.392 1.7 1.7 0 0 1-.102-.627zm8.239 2.238h-.953l-1.338-3.999h.917l.896 3.138h.038l.888-3.138h.879z"/>
+              </svg>
+            </button>
+            <button class="col-sm-1 me-2 ms-2 btn btn-outline-info" id="btnmetgesback"  data-bs-toggle="modal" data-bs-target='#mdlmetback'
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16">
+                <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z"/>
+              </svg>
+            </button>
+
+            
+        </div>
+
+       
+        <div class="row ms-1 me-1 table-container">
+            <table class="table table-striped " id="tblhisgesback">
+                <thead>
+                    <tr>
+                        <th hidden scope="col">Id gestion</th>
+                        <th scope="col">Tipo de orden</th>
+                        <th scope="col">Cuenta</th>
+                        <th scope="col">Orden</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Estado</th> 
+                        <th scope="col">Fecha</th>                   
+                        <th scope="col">Asesor</th>
+                        <th scope="col">Estado Ges</th>
+                        <th scope="col">Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!--Modales  de gestion-->
+<div class="modal fade" id="mdldesbaseback" aria-hidden="true" aria-labelledby="mdldesbaseback" tabindex="-1">  
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="mdldesbasebackh">Historial bases cargadas!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-sm" id="tbldesbaseback">
+            <thead>
+              <tr>
+                <th hidden>Idcargbase</th>                         
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Fecha</th>              
+                <th>Hora</th>
+                    <th>N° ordenes</th>
+                    <th>Motivo</th>
+                    <th>Aplicar</th>
+              </tr>
+            </thead>
+            <tbody id="tblhiscanase">
+  
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <!--<button class="btn btn-danger" id="Btnaplicancan">Aplicar</button>-->
+        </div>
+      </div>
+    </div>
+  </div>
+<!--Modal detalles de gestion de orden escogida-->
+<div class="modal fade" id="mdldetgesase" aria-hidden="true" aria-labelledby="mdldetgesase" tabindex="-1">  
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="mdldetgesaseh">Seguimiento gestion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table" id="tbldetgesase">
+            <tbody>
+                <tr>
+                    <td><strong>Cuenta</strong></td>
+                    <td><strong>Orden</strong></td>
+                    <td><strong>Asesor</strong></td>
+                </tr>
+                <tr>
+                    <td id="cldCuenta"></td>
+                    <td id="cldOrden"></td>
+                    <td id="cldAsesor"></td>
+                </tr>
+                <tr>
+                    <th><strong>Gestionado</strong></th>
+                    <th><strong>Fecha</strong></th>
+                    <th><strong>Hora</strong></th>
+                </tr>
+                <tr>
+                    <td id="cldges"></td>
+                    <td id="cldfecges"></td>
+                    <td id="cldhorges"></td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th><strong>Contacto</strong></th>
+                        <th><strong>Gestion</strong></th>
+
+                    </tr>
+                <tr>
+                    <td id="cldcont"></td>
+                    <td id="cldredcont"></td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th><strong>Observaciones</strong></th>                               
+                </tr>
+                <tr>
+                    <td id="cldobs"></td>
+                </tr>
+            </tbody>                                  
+          </table>
+          
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" id="Btnaplidelcan">Eliminar</button>          
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!--Modal detalles de gestion de orden escogida-->
+<div class="modal fade" id="mdlmetback" aria-hidden="true" aria-labelledby="mdlmetback" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mdlmetbackh">Metricas gestion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="card m-2">
+          <div class="card-body">
+            <div class="row">
+              <label class="col-sm-1" for="Selbasbackmet">Base</label>
+              <select class="col-sm-11 form-select" name="Selbasbackmet" id="Selbasbackmet">
+                <option value="">..::Selecione::..</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <table class="table" id="tblmetgesback">
+          <thead style="color: white;background-color: black;">
+            <th>Asesor</th>
+            <th>Total</th>
+            <th>Pendientes</th>
+            <th>Gestionado</th>
+            <th>Contacto</th>
+            <th>% Contacto efectivo</th>
+            <th>Productividad</th>
+          </thead>
+          <tbody>
+
+          </tbody>
+        </table>
+
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-outline-info" id="btnupdmet">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>
+            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"></path>
+          </svg>
+
+          </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<script src="{{ url_for('static', filename='/js/classes/CallApis.js') }}"></script>   
+<script src="{{ url_for('static', filename='/js/funcionesApp/FuncionesBacklog/Funcasigbacklog.js') }}"></script>
+<script>    
+    new handletablahistorico( "{{ csrf_token() }}").main()  
+</script>
+
+{% endblock %}

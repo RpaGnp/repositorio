@@ -1,0 +1,18 @@
+<div class="form-group row align-items-center">
+    <label for="selectyear" class="col-sm-2 col-form-label text-center">Año</label>
+    <div class="col-sm-10">
+      <select class="custom-select" name="selectyear" id="selectyear" title="Elige una opción">
+      <script>
+              const selectoryear=document.getElementById('selectyear')              
+              for(let year of [2023,2024]){
+                    let opt=document.createElement('option')
+                    opt.value=year
+                    opt.innerHTML=year
+                    selectoryear.appendChild(opt)                    
+                                  }
+            const nyear = new Date().getYear() + 1900;
+            selectoryear.value=nyear
+      </script>
+    </select>
+    </div>
+  </div>

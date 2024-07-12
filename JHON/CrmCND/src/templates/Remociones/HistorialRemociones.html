@@ -1,0 +1,91 @@
+{% extends 'BaseDashboard.html' %} {% block title %}CRM REMOCIONES{% endblock %}
+
+{% block headers %}
+    <script src="{{ url_for('static', filename='js/funcionesApp/funcionesFormacion/FunRemocion.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/classes/CallApis.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+    <link
+      href="{{ url_for('static', filename='css/EstilosRemociones.css') }}"
+      rel="stylesheet"
+    />
+{% endblock %}
+
+
+{% block Body %}
+
+{% include '/ElementosVisuales/SelectorMes.html' %}
+<div class="row mt-2 mb-2 ms-2 me-2">
+    <table class="table table-hover table-sm">
+        <thead>
+            <tr>
+                <th scope="col">IdRemocion</th>
+                <th scope="col">Idusuario</th>
+                <th scope="col">Nombres</th>
+                <th scope="col">Campaña</th>
+                <th scope="col">Supervisor</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Nota</th>
+                <th scope="col">Formacion</th>
+                <th scope="col">Calidad</th>
+                <th scope="col">Operacion</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tblhisrem">
+            {% for row in ArrayRemociones %}
+                <tr>
+                    {% for dato in row %}
+                        <td>{{dato}}</td>
+                    {% endfor%}
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Acciones
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="border:solid">
+                                <button class="dropdown-item" id="btngesrem" >Gestionar</button>
+                                {% if current_user.cargo in ['Gerente','JEFE DE OPERACIONES','LIDER CALIDAD','LIDER FORMACION','Desarrollador'] %}
+                                    <button class="dropdown-item" id="btndelrem" >Eliminar</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+{% include 'Remociones/Modales.html' %}
+<script>
+    const usuNumerario = "{{ current_user.id}}"
+    const HadleTabla =new handletablahistorico("{{ csrf_token() }}",'tblhisrem')
+    const handleFiles = new HandleFiles("{{ csrf_token() }}")
+
+
+    for(var btn of document.querySelectorAll('#btndelrem')){
+        btn.addEventListener('click',async (e)=>{
+            var fila = e.target.closest('tr');
+            var textoPrimerTd = fila.cells[0].innerText;
+            await HadleTabla.delrow(textoPrimerTd)
+
+        })
+    }
+
+
+    for (var btn of document.querySelectorAll('#btngesrem')){
+        btn.addEventListener("click",async (e)=>{
+            var fila = e.target.closest('tr').cells[0].innerText;
+            $("#mdlstcgesrem").modal('toggle');
+            await HadleTabla.getdataremocion(fila)
+
+
+        })
+    }
+
+</script>
+
+
+{% endblock %}

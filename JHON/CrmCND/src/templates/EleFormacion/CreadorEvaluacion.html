@@ -1,0 +1,148 @@
+{% extends './baseDashboard.html'%}
+{% block title %}Crm Formacion{% endblock %}
+
+{% block headers %}
+    <!-- <link rel="stylesheet" href="{{ url_for('static',filename='css/estiloCreadorEva.css') }}"> -->
+{% endblock %}
+
+{% block callscripts %}
+    <script src="{{ url_for('static',filename='js/classes/CallApis.js') }}"></script>    
+{% endblock %}
+
+{% block Body %}
+<style>
+
+    #Btnaddpreg {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007BFF;
+      color: #FFFFFF;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+<h5>Modulo de creacion evaluaciones</h5>
+<div id="main">
+  <form action="">
+    <div class="row">
+      <div class="col-10">
+        <div style="position: relative;text-align: start;">   
+            <div class="row">
+                <div class="col-2">
+                    <label for="selectmes">Mes</label>
+                </div>
+                <div class="col-3">
+                    <select class="form-select" name="selectmes" id="selectmes">
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>                
+            
+                <div class="col-2">
+                    <label for="selectpreturno">Preturno</label>
+                </div>            
+                <div class="col-5">
+                    <select class="form-select" name="selectpreturno" id="selectpreturno">
+                        <option value="">..::Selecione::..</option>
+                        
+                    </select>
+                </div>                
+        </div>
+    </div>        
+</div>        
+    <br>
+    <hr>
+
+    <div class="row mt-2">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Formador</th>
+                    <th>N° Evaluados</th>
+                </tr>
+            </thead>
+            <tbody id="tbldetevabypre">
+
+
+            </tbody>
+        </table>
+
+    </div>
+    
+    <div class="row">
+        <div class="col" style="text-align: start;">
+            <input type="button" id="Btnaddpreg" class="btn btn-info" value="Agregar Pregunta">
+        </div>
+    </div>    
+    <div class="form">
+        <div class="row">
+            <div class="col">
+                <div id="BoardConst">
+
+
+                </div>
+            </div>  
+        </div>
+
+        <input type="button" value="Guardar" id="btnGuaForm" class="btn btn-success btnGuaForm">
+    </div>
+
+
+
+  </form>
+</div>
+    
+<script src="{{ url_for('static', filename='/js/funcionesApp/lanzadorAlerts.js') }}"></script>
+<script src="{{ url_for('static',filename='js/funcionesApp/funcionesFormacion/FuncionesEaveluacion.js') }}"></script>   
+<script>  
+    const HandleMes = new HandleSelePre("{{ current_user.ciudad }}","{{ current_user.id }}")
+    HandleMes.addFuncMes()
+
+    const Handlepregunta = new HandlePreguntas("{{ current_user.id }}")
+    document.getElementById('Btnaddpreg').addEventListener('click', function(e){
+        Handlepregunta.conspreg()        
+    })
+
+    document.getElementById('btnGuaForm').addEventListener('click', function(e){
+        Handlepregunta.CreJsonPre();
+        document.getElementById('btnGuaForm').disabled = true;
+        // location.reload();
+    })
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        const nmes = new Date().getMonth() + 1;
+        const JsonMes={1:'Enero', 2:'Febrero', 3:'Marzo', 4:'Abril', 5:'Mayo', 6:'Junio',
+                                        7:'Julio', 8:'Agosto', 9:'Septiembre', 10:'Octubre', 11:'Noviembre', 12:'Diciembre'}
+        
+        const selectormes=document.getElementById('selectmes')  
+        selectormes.value=nmes
+        await HandleMes.addclickMes()
+        await HandleMes.AddEvaByPreTbl()
+
+
+    })
+
+    HandleMes.addFuncPre()
+
+</script>
+
+
+</script>
+{% endblock %}

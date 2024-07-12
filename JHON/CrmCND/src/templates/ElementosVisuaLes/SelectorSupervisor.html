@@ -1,0 +1,20 @@
+<div class="form-group row align-items-center">
+    <label for="select_id_1" class="col-sm-3 col-form-label text-center">Supervisor</label>    
+    <div class="col-sm-9">
+    <select class="form-select" id="SelSupervisor">
+        <script>
+            async function Getdatsuper(){
+                const selector = document.getElementById("SelSupervisor")
+                const Data = await new HandleApis("{{ csrf_token() }}","/ConsultorDatos",{"Option":"Getcambyciudad",Ciudad:"{{current_user.ciudad}}"}).callPromisePost()
+                CodInsert=""
+                for(var options of Data['ArrayData']){
+                    var CodTemp = `<Option value="${options[0]}">${options[1]}</Option>`
+                    CodInsert+=CodTemp;
+                }
+                selector.innerHTML=CodInsert
+            }
+            Getdatsuper()
+        </script>
+    </select>
+    </div>
+</div>

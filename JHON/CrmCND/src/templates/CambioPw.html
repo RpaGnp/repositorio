@@ -1,0 +1,105 @@
+{% extends './baseDashboard.html'%} {% block title %}Cambio Clave{% endblock %}
+
+
+
+
+{% block Body %}
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="card shadow-lg border-0 rounded-lg mt-5">
+                        <div class="card-header"><h3 class="text-center text-black font-weight-light my-4">Actualizar contraseña</h3></div>
+                        <div class="card-body">
+                            <form>                                
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="inpcurpw" type="password" placeholder="************" />
+                                    <label for="inpcurpw">Contraseña Actual</label>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <input class="form-control" id="inputPassword" type="password" placeholder="Create a password" />
+                                            <label for="inputPassword">Nueva Contraseña</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <input class="form-control" id="inputPasswordConfirm" type="password" placeholder="Confirm password" />
+                                            <label for="inputPasswordConfirm">Confirmar contraseña</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 mb-0">
+                                    <div class="d-grid"><a class="btn btn-primary btn-block" id="btnchapw" >Cambiar</a></div>
+                                </div>
+                                <hr>
+                                <div class="alert alert-success allert-dismissible" id="alertCamCon" role="alert">
+                                    <strong id="TextAlerTCamCon">---</strong>
+                                    <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close"
+                                    ></button>
+                                </div>
+                            </form>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script type="text/javascript">
+    var csrf_token = "{{ csrf_token() }}";
+
+    $("#alertCamCon").hide()
+    $("#btnchapw").click(function(){
+        for(var i of ["inpcurpw","inputPassword","inputPasswordConfirm"]){            
+            if (document.getElementById(i).value==""){                
+                document.getElementById(i).focus()
+                return
+            }
+        }
+        if(document.getElementById("inputPassword").value!=document.getElementById("inputPasswordConfirm").value){
+            $("#alertCamCon").show()
+            $("#TextAlerTCamCon").html("Las nuevas contraseñas no inciden!")
+        }else{
+            const options = {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": csrf_token,
+                },
+                body: JSON.stringify({Gestion:'updpwaseact',IdUsuario:'{{ current_user.id }}',ClaveGetUsu:document.getElementById('inpcurpw').value,NuePwUsu:document.getElementById('inputPassword').value})
+            };
+            fetch('/UpdCredenciales',options).then(response => response.text())
+                .then(data => {
+                    const json = JSON.parse(data)
+                    console.log(json)
+                    if(json['ResCopClav']==false){
+                        document.getElementById("alertCamCon").style.display = "block";
+                        $("#TextAlerTCamCon").html("Clave actual no coincide con la proporcionada!",)
+                        $("#alertCamCon").fadeOut(5000)
+                    }else{
+                        Swal.fire({
+                          position: 'top-end',
+                          icon: 'success',
+                          title: 'Contraseña actualiza con exito',
+                          showConfirmButton: false,
+                          timer: 15000
+                        })
+                        //window.location.reload()
+                    }
+                    
+
+                })
+        }
+
+    })
+
+
+</script>
+
+{% endblock %}
+

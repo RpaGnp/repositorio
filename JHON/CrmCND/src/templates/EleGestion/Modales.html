@@ -1,0 +1,180 @@
+  <!-- Modal historial razon-->
+  <div class="modal fade" id="mdldetrazon" tabindex="-1" aria-labelledby="mdldetrazon" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Detalle razon</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th><strong>Orden</strong></th>
+                            <th><strong>Fecha registro</strong></th>
+                            <th><strong>Hora Registro</strong></th>
+                            <th><strong>Estado orden</strong></th>
+                            <th><strong>Fecha gestion</strong></th>
+                            <th><strong>Hora gestion</strong></th>
+                            <th><strong>Detalle gestion</strong></th>
+                        </tr>
+                        <tr>
+                            <td id="otraz"></td>
+                            <td id="fecregraz"></td>
+                            <td id="horregraz"></td>
+                            <td id="estgesraz"></td>
+                            <td id="fecgegraz"></td>
+                            <td id="horgesraz"></td>
+                            <td id="detgesraz"></td>
+                        </tr>
+                        </tbody>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th><strong>Notas Asesor</strong></th>
+                                </tr>
+                                <tr>
+                                    <td id="notraz"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    
+
+                </table>
+
+
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Salir</button>          
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<!--Modales send cancelar orden-->
+<div class="modal fade" id="mdlcanorden" tabindex="-1" aria-labelledby="mdlcanorden" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mdlcanorden1">Cancelar Lls</h5>
+
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/sendrazonasesor" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="mb-3 row">
+              <label class="col-sm-1 col-form-label" for="selTiporden">Tipo</label>
+              <div class="col-sm-5">
+                  <select class="form-select form-select-sm" id="selTiporden" name="selTiporden">
+                      <option class="Form-option" value="LLS" selected>Lls</option>
+
+                  </select>
+              </div>
+              <label class="col-sm-1 col-form-label" for="selcodcierre">Codigo RR</label>
+              <div class="col-sm-5">
+                <select class="form-select form-select-sm" id="selcodcierre" name="selcodcierre">
+                    <option class="Form-option" value="Autogenerado" selected>Autogenerado</option>
+                </select>
+              </div>
+
+          </div>
+          <div class="mb-3 row">
+              <label class="col-sm-1 col-form-label" for="inporden">Ot/Lls</label>
+              <div class="col-sm-5">
+                  <input  type="number" class="form-control form-control-sm" id="inporden" name="inporden" required>
+              </div>
+              <label class="col-sm-1 col-form-label" for="chkinc">Inc</label>
+              <div class="col-sm-1 form-check">
+                <input  type="checkbox" class="form-check-input" value=1 id="chkinc" name="chkinc">
+              </div>
+              <div class="col-sm-4">
+                  <input  type="text" class="form-control form-control-sm" id="inpinc" name="inpinc" hidden>
+              </div>
+          </div>
+          <div class="mb-3 row">
+              <label for="txtnotascan">Notas:</label>
+              <textarea class="form-control" id="txtnotascan" name="txtnotascan" required>
+
+              </textarea>
+          </div>
+        <div class="mb-3 row">
+          <div class="col">
+            <input type="submit" value="Enviar" class="btn btn-success text-white">
+            <input class="btn btn-info text-white" id="btncallhiscan" data-bs-target="#mdlhiscanorden"
+            data-bs-toggle="modal" data-bs-dismiss="modal" value="Historial">
+          </div>
+        </div>
+      </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Modal de historial-->
+<div class="modal fade" id="mdlhiscanorden" aria-hidden="true" aria-labelledby="mdlhiscanorden" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mdlhiscanorden1">Historial cancelacion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th hidden>IdCan</th>
+              <th>Orden</th>
+              <th>Tipo</th>
+              <th>Codcan</th>
+              <th>Estado</th>
+              <th>Observaciones</th>
+            </tr>
+          </thead>
+          <tbody id="tblhiscanase">
+
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-target="#mdlcanorden" data-bs-toggle="modal" data-bs-dismiss="modal">Volver</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+  function updselecodigos(Tipo){
+    //funcion para llenag los imputs automaticamente inputs cod razones
+    const TipoOt={"Lls":{"Señal ok mal agendado":"LSC","Incidente":"n04"},"Ots":{"Direccion":"13",
+                        "Mal agendada":"06","Fuera de zona":"03","Sus no desea servicio":"09","Unidad posible fraude":"21","Venta devuelta":"04"}}
+    const seleCodrr=document.getElementById("selcodcierre")
+    seleCodrr.innerHTML = ""
+    code="<option value=''>..:Seleccione:..</option>"
+    for(var codigo in TipoOt[Tipo]){
+      code+=`<option value='${codigo}'>${codigo}</option>`
+    }
+    seleCodrr.innerHTML=code;
+  }
+
+
+
+  document.getElementById("selTiporden").addEventListener("change",function(e){
+    updselecodigos(e.target.value)
+  })
+
+  document.getElementById('chkinc').addEventListener("click",()=>{
+    inpinc['hidden'] =  !inpinc['hidden']
+  })
+
+</script>

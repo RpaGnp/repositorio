@@ -1,0 +1,423 @@
+{% extends './baseDashboard.html'%}
+
+{% block title %}Crm Formacion{% endblock %}
+{% block Body %}
+
+{% block headers %}
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/estiloCreaPreturnos.css')}}">
+{% endblock %}
+
+{% block callscripts %}
+  <script src="{{ url_for('static', filename='/js/funcionesApp/ArbolFunciones.js') }}"></script>  
+  <script src="{{ url_for('static', filename='/js/classes/PaginacionTabla.js') }}"></script>    
+  <script src="{{ url_for('static', filename='/js/funcionesFormacion/FunPreturnos.js') }}"></script>  
+{% endblock %}
+
+<h5 style="color: black;">Modulo gestion preturnos</h5>
+
+<table class="table">
+  <tr>
+    <td>
+      {% include 'ElementosVisuales/Selectormes.html' %}
+    </td>
+    <td>
+      {% include 'ElementosVisuales/Selectoryear.html' %}
+    </td>
+  </tr>
+</table>
+<div class="row">
+        <div class="col-auto ms-2">
+          <button type="submit" data-bs-toggle="modal" data-bs-target="#mdladdperturno" class="btn btn-primary" name="btnaddpreturno" id="btnaddpreturno" onclick="ClearForm()">Nuevo</button>
+        </div>
+</div>
+<table  class="table table-fixed" id="tblhpreturnos">
+    <tr>
+      <th style="display:none;"> Idfile </th>
+      <th> Nombre </th>
+      <th> Fecha </th>
+      <th> Tema </th>
+        <th> Segmento </th>
+        <th> Tipo </th>
+      <th> evaluacion </th>
+      <th> Acciones </th>      
+    </tr>
+    <tbody id="tblpreturnos">
+
+    </tbody>
+  </table>
+
+
+
+<div class="list" id="list"></div>
+  <div class="pagenumbers pagination justify-content-center" id="pagination">
+</div>
+
+<!--modal add nuevo preturno-->
+<!-- Modal -->
+<div class="modal fade" id="mdladdperturno" tabindex="-1" aria-labelledby="lbltitulomodal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="lbltitulomodal">Agregar preturno</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="border rounded p-4">
+                <form id="formnuepre" action="{{ url_for('uploader') }}" method="post" enctype="multipart/form-data">
+                    <div class="form-row">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" id="OpcionGestion" name="OpcionGestion" value="Nuevo"/>
+                        <input type="hidden" id="IdFile" name="IdFile" value=""/>
+                        <input type="hidden" name="inpusucargue" id="inpusucargue" value="{{ current_user.id }}">
+                        <input type="hidden" name="inpciucar" id="inpciucar" value="{{ current_user.ciudad }}">
+                        <div class="row">
+                        </div>
+                          <div class="form-group col-4">
+                            <label for="inpnompreturno">Nombre preturno</label>
+                            <input type="text" class="form-control" name="inpnompreturno" id="inpnompreturno" placeholder="Preturno">
+                          </div>
+                          <div class="form-group col-4">
+                            <label for="inpfecingpreturno">Fecha</label>
+                            <input type="date" class="form-control" name="inpfecingpreturno" id="inpfecingpreturno">
+                          </div>
+                          <div class="form-group col-4">
+                            <label for="inpdespreturno">Descripción</label>
+                            <input type="text" class="form-control" name="inpdespreturno" id="inpdespreturno" placeholder="Detalle">
+                          </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 mt-2">                      
+                          <div class="col-auto">
+                        <label for="SelSegmento">Segmento</label>
+                      </div>
+                      <div class="col-auto">
+                        <select class="form-select" name="SelSegmento" id="SelSegmento" required>
+                          <option value="">..::Seleccione::..</option>
+                          <option value="HHPP">HHPP</option>
+                          <option value="MASIVO">MASIVO</option>
+                        </select>
+                      </div>
+                        <div class="col-auto">
+                        <label for="SelSegmento">Tipo</label>
+                      </div>
+                      <div class="col-auto">
+                        <select class="form-select" name="Seltipoges" id="Seltipoges" required>
+                          <option value="">..::Seleccione::..</option>
+                          <option value="Preturno">Preturno</option>
+                          <option value="Remocion">Remocion</option>
+                        </select>
+                      </div>
+                    </div>
+
+
+                <!-- Input type file -->
+                <div class="form-group row align-items-star">
+                    <label for="file_id_0" class="col-sm-1 col-form-label">Archivo</label>
+                    <div class="col-sm-10">
+                      <div class="custom-file text-start">
+                        <input required type="file" accept=".pdf"  name="filepdfpreturno" id="file_id_0">
+                        
+                      </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary" >Guardar</button>
+                </div>
+              </form>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+
+
+
+
+
+{% include 'EleFormacion/Modales.html' %}
+<script src="{{ url_for('static', filename='/js/funcionesApp/funcionesFormacion/FuncionesTabla.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/funcionesApp/funcionesFormacion/FunBusAsis.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/funcionesApp/sorttable.js') }}"></script>
+
+<script>
+    function Actualizar( ){
+      const list_element = document.getElementById('tblpreturnos');
+      const pagination_element = document.getElementById('pagination');
+      var messelected=document.getElementById('selectmes').value
+      var yearselected=document.getElementById('selectyear').value
+	  options=HeaderFetch("{{ csrf_token() }}",
+			{Option:'Getpretmes',yeardata:yearselected,mesdata:messelected})
+      //options=HeaderFetch("{{ csrf_token() }}",{Option:"GetPreturnosActivos"})
+      fetch("/ConsultorDatos",options).then(response => response.text()).then(data => {
+      //const data = JSON.parse(data);
+      //const  list_items  = JSON.parse(data);
+      //const current_page = 1;
+      //const rows = 10;
+      //DisplayList(list_items, list_element, rows, current_page);
+      //SetupPagination(list_items, pagination_element, rows,current_page);
+
+        list_element.innerHTML=""
+        const  list_items  = JSON.parse(data);
+        list_items.forEach(Dato => {
+          var row = document.createElement('tr')
+          var tempcode=`
+          <td hidden>${Dato[0]}</td>
+          <td >${Dato[1]}</td>
+          <td >${Dato[2]}</td>
+          <td >${Dato[3]}</td>
+          <td >${Dato[4]}</td>
+          <td >${Dato[5]}</td>
+          <td ><a href="${Dato[6]}">Link</a></td>
+          <td><div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Acciones
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="border:solid">
+                    <button class="dropdown-item" id="btndwpret">Ver</button>
+                    <button class="dropdown-item" id="btnedipreturno">Editar</button>
+                    <button class="dropdown-item" id="btndelpret">Eliminar</button>
+                    <button class="dropdown-item" id="btnasispre">Asistencia</button>
+                  </div>
+                </div>
+            </td>
+          `
+
+          row.innerHTML = tempcode
+          list_element.appendChild(row)
+
+        });
+
+        })
+    }
+
+
+    document.getElementById("btnbusaseasi").addEventListener("click", SearchName);
+
+    document.getElementById('selectmes').addEventListener("change",async function(){
+      await Actualizar()
+    })    
+    document.getElementById('selectyear').addEventListener("change",async function(){
+      await Actualizar()
+    })
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      await Actualizar();
+    });
+
+    // funciones de jquery
+    $("#tblhpreturnos").on('click','#btnedipreturno',function (){    
+      var currentRow=$(this).closest("tr");
+      var colid=currentRow.find("td:eq(0)").text();      
+      $("#mdladdperturno").modal("toggle")
+      // limpiar campos modal
+      document.getElementById('formnuepre').reset()
+
+      //crear promesa js?
+      options=HeaderFetch("{{ csrf_token() }}",{Option:'GetDetaPretu',PretId:colid})
+      fetch("/ConsultorDatos",options).then(response => response.text())
+          .then(data => {
+            const  json  = JSON.parse(data);
+            //console.log(list_items[["ArrayData"]])
+            ArrayElementos=['inpnompreturno','inpfecingpreturno','inpdespreturno','SelSegmento']
+            arrayData=json["ArrayData"][0]
+            i=0
+            for(var dato of arrayData){
+              document.getElementById(ArrayElementos[i]).value=dato
+              i+=1
+              }
+            })
+            delete arrayData
+            document.getElementById("OpcionGestion").value="Editar"
+            document.getElementById("IdFile").value=colid
+      })
+    
+
+    $("#tblhpreturnos").on('click','#btndelpret',function (){
+      var currentRow=$(this).closest("tr");
+      var colid=currentRow.find("td:eq(0)").text();
+      var colname=currentRow.find("td:eq(1)").text();
+      Swal.fire({
+        title: 'Confirmacion Eliminacion?',
+        text: "Esta seguro de eliminar el preturno "+colname+" ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, Borrarla!'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            options=HeaderFetch("{{ csrf_token() }}",{Option:'DelPretFile',PretId:colid})
+            fetch("/ConsultorDatos",options).then(response => response.text())
+                .then(data => {
+                    Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success',
+                    )
+                    location.reload();
+                })
+
+        }})
+      })
+
+    $("#tblhpreturnos").on('click','#btndwpret',function(){
+      var currentRow=$(this).closest("tr");
+      var colid=currentRow.find("td:eq(0)").text();
+      options=HeaderFetch("{{ csrf_token() }}",{Option:'DwPretFile',PretId:colid})
+            fetch("/ConsultorDatos",options)
+            .then(response => response.blob())
+            .then(blob => {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                window.open(url, '_blank');
+                /*a.href = url;
+                a.download = "filename.pdf";
+                document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+                a.click();
+                a.remove();*/  //afterwards we remove the element again
+            });})
+
+    function ClearForm(){
+      document.getElementById('formnuepre').reset()
+    }
+
+    async function filltableasis(Segmento){
+      const tblbody=document.getElementById('tblbodasipre');
+      tblbody.innerHTML=""
+      document.getElementById("checkAllAsi").checked=false
+      
+      AsesorByCamp=await callPromise("{{ csrf_token() }}","/ConsultorDatos",{Option:"Getasebycamp",
+                                      "idpreturno":document.getElementById("inpIdpreturno").value,
+                                      "IdCiudad":"{{ current_user.ciudad }}","Segmento":Segmento})
+
+      var values =AsesorByCamp['ArrayData']      
+      for(var i=0; i<=values.length-1;i++){        
+        var tr = document.createElement("tr");                                
+          // var col = document.createElement("td");          
+          // col.setAttribute("id", "Row" + i + "col"+j);            
+          // tr.appendChild(col);          
+          var codetds =`            
+            <td id="Row${i}col0" hidden="true">${values[i][0]}</td>
+            <td id="Row${i}col1">${values[i][1]}</td>
+            <td id="Row${i}col2">${values[i][2]}</td>
+            <td id="Row${i}col3">${values[i][3]}</td>
+            <td id="Row${i}col4">
+              <input type="checkbox" id="checkGes${i}4" class="checkGes4"  ${values[i][4] == 1 ? 'checked' : ''} ></td>
+            <td id="Row${i}col5}">
+              <input type="checkbox" id="checkNov${i}5" class="checkNov5" ${values[i][5] == 1 ? 'checked' : ''}></td>
+            <td id="Row${i}col6">
+              <select>
+                <option ${values[i][6] == 'No aplica' ? 'selected' : ''} selected>No aplica</option>
+                <option ${values[i][6] == 'Incapacidad' ? 'selected' : ''}>Incapacidad</option>
+                <option ${values[i][6] == 'Permiso' ? 'selected' : ''}>Permiso</option>
+                <option ${values[i][6] == 'Vacaciones' ? 'selected' : ''}>Vacaciones</option>
+                <option ${values[i][6] == 'Licencia' ? 'selected' : ''}>Licencia</option>
+                <option ${values[i][6] == 'Remoto' ? 'selected' : ''}>Remoto</option>
+                <option ${values[i][6] == 'Retiro' ? 'selected' : ''}>Retiro</option>
+                <option ${values[i][6] == 'Falla CRM' ? 'selected' : ''}>Falla CRM</option>
+
+              </select>
+            </td>            
+          `
+          tr.innerHTML=codetds
+          tblbody.appendChild(tr);
+        
+      }
+
+
+    }
+		
+    $("#tblhpreturnos").on('click','#btnasispre',async function(){
+      var currentRow=$(this).closest("tr");
+      var IdPreturno=currentRow.find("td:eq(0)").text();
+      var NomPre=currentRow.find("td:eq(1)").text()
+      var SegPre=currentRow.find("td:eq(4)").text()
+      document.getElementById('lblmodgesasis').innerHTML="Asistencia preturno "+NomPre
+      document.getElementById('inpIdpreturno').value=IdPreturno
+      document.getElementById('tblbodasipre').innerHTML=""
+      
+      $('#selcamp').val('Seleccione...');
+      $("#Modgesasistencia").modal("toggle")
+      await filltableasis(SegPre)
+        })
+      
+
+
+    // cargar modulo para cargar notas
+    $("#tblhpreturnos").on("click","#btncarnotpre",function(){
+      var currentRow=$(this).closest("tr");
+      var IdPreturno=currentRow.find("td:eq(0)").text();
+      document.getElementById('idPreForm').value=IdPreturno
+      $("#ModgesNotasPreturno").modal("toggle")
+      
+
+
+    })
+
+  // asistencia
+  $("#btnguaasipre").click(async function(){
+    var dinamicbtn = `
+                      <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                      Actualizando...
+                    `
+    $("#btnguaasipre").html(dinamicbtn)
+
+    ArrayData=[]    
+    for(var row=0;row<document.getElementById("tblbodasipre").rows.length;row++){
+      ArrayTemp=[
+        document.getElementById('inpIdpreturno').value,
+        "{{ current_user.id }}",
+        document.getElementById('Row'+row+'col'+0).innerText,
+        document.getElementById('checkGes'+row+4).checked,
+        document.getElementById('checkNov'+row+5).checked,        
+        document.getElementById('Row'+row+'col'+6).querySelector('select').value
+        ]      
+        
+      ArrayData.push(ArrayTemp)          
+    }    
+    await callPromise("{{ csrf_token() }}","/ConsultorDatos",{Option:"InsAsiPreturnos","idpreturno":document.getElementById("inpIdpreturno").value,
+    arraydatos:ArrayData})
+
+    
+    Swal.fire({                      
+          icon: 'success',
+          title: 'Asistencia guardada!',
+          showConfirmButton: true,
+          
+        })
+    $("#btnguaasipre").html("Guardar Cambios")
+  })
+  
+
+  function toggleAsi(source) {
+    var checkboxes = document.querySelectorAll('input[class="checkGes2"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] != source)
+            checkboxes[i].checked = source.checked;
+    }
+  }
+  
+  function toggleEva(source) {
+    var checkboxes = document.querySelectorAll('input[class="checkGes3"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] != source)
+            checkboxes[i].checked = source.checked;
+    }
+  }
+
+
+  
+
+  
+</script>
+
+
+
+
+
+
+
+
+{% endblock %}
